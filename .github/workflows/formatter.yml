@@ -1,39 +1,22 @@
-name: Django CI
+name: Python Formatter (isort & black)
 
-on:
-  push:
+on: [push]
 
 jobs:
-  ci:
-    runs-on: ubuntu-20.04
+  formatting:
+    runs-on: ubuntu-latest
     steps:
       - name: Check out the codes
-        uses: actions/checkout@v2
-
-      - name: Setup python environment
-        id: setup-python
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.11
-
-      - name: Set timezone to KST
+          python-version: '3.x'
+      - name: Install isort and black
         run: |
-          sudo rm /etc/localtime
-          sudo ln -s /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-
-      - name: Install Poetry
-        run: |
-          curl -sSL curl -sSL https://install.python-poetry.org | python3 -
-          echo "${HOME}/.local/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: |
-          poetry install
-
+          python -m pip install --upgrade pip
+          pip install isort black
       - name: Run black
-        run: |
-          poetry run black . --check
-
+        run: black --check .
       - name: Run isort
-        run: |
-          poetry run isort . --check --diff
+        run: isort --check-only .
