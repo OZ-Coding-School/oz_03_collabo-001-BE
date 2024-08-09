@@ -42,6 +42,7 @@ DEFAULT_DJANGO_APPS = [
 CUSTOM_APPS = [
     "users.apps.UsersConfig",
     "places.apps.PlacesConfig",
+    "common.apps.CommonConfig",
 ]
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS
