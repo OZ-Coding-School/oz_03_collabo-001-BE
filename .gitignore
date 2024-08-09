@@ -1,6 +1,14 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
 
+
+# Ignore all files in migrations directories
+**/migrations/*
+
+# But don't ignore the __init__.py file
+!**/migrations/__init__.py
+
+
 ### Django ###
 *.log
 *.pot
