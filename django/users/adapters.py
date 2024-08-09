@@ -4,10 +4,11 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
+
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def populate_user(self, request, sociallogin, data):
         user = super().populate_user(request, sociallogin, data)
-        user.email = data.get('email')
-        user.nickname = data.get('nickname')
-        user.profile_image = sociallogin.account.extra_data.get('profile_image', None)
+        user.email = data.get("email")
+        user.nickname = data.get("nickname")
+        user.profile_image = sociallogin.account.extra_data.get("profile_image", None)
         return user
