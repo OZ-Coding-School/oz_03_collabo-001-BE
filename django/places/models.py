@@ -1,6 +1,8 @@
-from django.db import models
 from common.models import CommonModel
 from users.models import CustomUser
+
+from django.db import models
+
 
 class ServicesIcon(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
@@ -10,10 +12,13 @@ class ServicesIcon(CommonModel):
     def __str__(self):
         return self.name
 
+
 class Place(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
-    store_icon = models.ForeignKey(ServicesIcon, on_delete=models.CASCADE, related_name='places')  # Foreign Key로 StoreIcon 참조
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='places')  # Foreign Key로 User 참조
+    store_icon = models.ForeignKey(
+        ServicesIcon, on_delete=models.CASCADE, related_name="places"
+    )  # Foreign Key로 StoreIcon 참조
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places")  # Foreign Key로 User 참조
     name = models.CharField(max_length=255, null=False)  # 장소 이름, Not Null
     region = models.CharField(max_length=255, null=False)
     description = models.TextField()  # 장소 설명
@@ -27,12 +32,14 @@ class Place(CommonModel):
     def __str__(self):
         return self.name
 
+
 class RecommendedPlace(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
-    place = models.ForeignKey('Place', on_delete=models.CASCADE, related_name='recommended_places')  # Foreign Key로 places 테이블 참조
+    place = models.ForeignKey(
+        "Place", on_delete=models.CASCADE, related_name="recommended_places"
+    )  # Foreign Key로 places 테이블 참조
     content = models.TextField(blank=True, null=True)  # 내용, 필수 아님
     tags = models.CharField(max_length=255, blank=True, null=True)  # 해쉬태그, 필수 아님
 
     def __str__(self):
         return self.place.name if self.place else f"Recommended Place {self.id}"
-
