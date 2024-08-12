@@ -1,6 +1,6 @@
-from users.utils import generate_random_nickname
 from common.models import CommonModel
 from places.models import Place
+from users.utils import generate_random_nickname
 
 from django.contrib.auth.models import (
     AbstractBaseUser,
