@@ -43,3 +43,4 @@ class RecommendedPlace(CommonModel):
 
     def __str__(self):
         return self.place.name if self.place else f"Recommended Place {self.id}"
+
