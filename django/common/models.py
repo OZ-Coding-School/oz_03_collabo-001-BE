@@ -8,3 +8,13 @@ class CommonModel(models.Model):
 
     class Meta:
         abstract = True  # 추상 클래스로 생성 (DB를 따로 만들지 않는다.)
+
+
+class Banner(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
+    image = models.ImageField()
+    category = models.CharField(max_length=255)
+    url_link = models.URLField()
+
+    def __str__(self):
+        return f"Banner {self.id}"
