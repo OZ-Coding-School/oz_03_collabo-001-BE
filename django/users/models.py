@@ -50,6 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class BookMark(CommonModel):
     from places.models import Place
+
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 User 참조
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 Place 참조
@@ -61,6 +62,7 @@ class BookMark(CommonModel):
 
 class ViewHistory(CommonModel):
     from places.models import Place
+
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="view_histories"
