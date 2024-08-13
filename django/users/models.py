@@ -1,5 +1,4 @@
 from common.models import CommonModel
-from places.models import Place
 from users.utils import generate_random_nickname
 
 from django.contrib.auth.models import (
@@ -50,16 +49,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class BookMark(CommonModel):
+    from places.models import Place
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 User 참조
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 Place 참조
-    check = models.BooleanField(default=False)
+    bookmark_check = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.nickname} - {self.place.name}"
 
 
 class ViewHistory(CommonModel):
+    from places.models import Place
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="view_histories"
