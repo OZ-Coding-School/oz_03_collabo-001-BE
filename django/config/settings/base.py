@@ -4,7 +4,7 @@ from pathlib import Path
 import environ
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # .env 파일을 로드
 load_dotenv(os.path.join(BASE_DIR, ".env"))
