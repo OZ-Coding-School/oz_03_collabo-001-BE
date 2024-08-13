@@ -6,6 +6,25 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# .env 파일 경로
+env_path = os.path.join(BASE_DIR, ".env")
+
+# .env 파일이 없을 경우 파일 생성
+if not os.path.exists(env_path):
+    with open(env_path, "w") as env_file:
+        env_file.write(
+            "DB_NAME=oz_03_collabo_01_babydog\n"
+            "DB_USER=myuser\n"
+            "DB_PASSWORD=mypassword\n"
+            "DB_HOST=localhost\n"
+            "DB_PORT=5432\n\n"
+            "GOOGLE_CLIENT_ID=your_google_client_id_value\n"
+            "OTHER_ENV_VARIABLE=your_value\n"
+            "GOOGLE_CLIENT_SECRET=efef\n"
+            "GOOGLE_REDIRECT_URI=ef\n"
+            "GOOGLE_SOCIAL_KEY=efef\n"
+        )
+
 # .env 파일을 로드
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 env = environ.Env()
