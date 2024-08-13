@@ -1,7 +1,7 @@
 # oz_03_collabo-001-BE
 합동 프로젝트 1팀 리포지토리입니다.
 
-# dev mode for docker  
+# 프론트엔드 로컬 개발을 위해 Docker로 환경 설정 및 실행  
 
 ### 1. 도커 데스크탑 설치  
 [도커사이트](https://www.docker.com/)
