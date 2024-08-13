@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 import environ
 from dotenv import load_dotenv
 
@@ -70,33 +71,32 @@ ROOT_URLCONF = "config.urls"
 SITE_ID = 1
 
 # Google allauth 설정
-GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = env('GOOGLE_REDIRECT_URI')
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI")
 
 # Google 소셜 로그인 제공자 설정
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': GOOGLE_CLIENT_ID,
-            'secret': GOOGLE_CLIENT_SECRET,
-            'key': env('GOOGLE_SOCIAL_KEY'),
+    "google": {
+        "APP": {
+            "client_id": GOOGLE_CLIENT_ID,
+            "secret": GOOGLE_CLIENT_SECRET,
+            "key": env("GOOGLE_SOCIAL_KEY"),
         }
     }
 }
 
 
 # 로그인 후 리디렉션할 URL
-LOGIN_REDIRECT_URL = '/'  
+LOGIN_REDIRECT_URL = "/"
 # 로그아웃 후 리디렉션할 URL
-LOGOUT_REDIRECT_URL = '/' 
-
+LOGOUT_REDIRECT_URL = "/"
 
 
 # 계정 관련 기본 설정
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 
@@ -127,7 +127,7 @@ DATABASES = {
 }
 
 
-#마이그레이션 오류로 sqllite로 진행함
+# 마이그레이션 오류로 sqllite로 진행함
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
