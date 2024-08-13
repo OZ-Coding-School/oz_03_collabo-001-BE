@@ -1,32 +1,32 @@
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as lz
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth import get_user_model
+from .forms import CustomAdminAuthenticationForm
 
-from .models import CustomUser
+CustomUser = get_user_model()
 
+class CustomUserAdmin(BaseUserAdmin):
+    list_display = ('email', 'nickname', 'is_staff', 'created_at')
+    list_filter = ('is_staff', 'is_superuser')
+    search_fields = ('email', 'nickname')
+    ordering = ('email',)
+    filter_horizontal = ()
 
-# Register your models here.
-class UserTypeFilter(admin.SimpleListFilter):
-    # '회원 유형' 필터의 제목
-    title = lz("회원유형")
-    # url 쿼리에서 사용될 파라미터 이름
-    parameter_name = "user_type"
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('nickname', 'profile_image')}),
+        ('Permissions', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
+    )
 
-    def lookups(self, request, model_admin):
-        # 관리자 페이지에서 보여질 필터 옵션
-        return (("is_staff", lz("운영진")),)
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'nickname', 'password1', 'password2'),
+        }),
+    )
 
-    def queryset(self, request, queryset):
-        return queryset.filter(is_staff=True)
+admin.site.register(CustomUser, CustomUserAdmin)
 
-
-class UserAdmin(admin.ModelAdmin):
-    # 관리자 페이지에서 보여줄 필드 목록을 설정
-    list_display = ("nickname", "email", "is_staff", "created_at")
-    # 필터 옵션을 제공팔 필드 목록을 설정
-    list_filter = (UserTypeFilter,)
-    # 읽기 전용 필드 목록을 설정
-    readonly_fields = ("email", "created_at", "updated_at")
-
-
-# user 모델을 관리자 페이지에 등록
-admin.site.register(CustomUser, UserAdmin)
+# Custom authentication form for admin login
+admin.site.login_form = CustomAdminAuthenticationForm

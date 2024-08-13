@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  # 개발용 Dockerfile 사용
+    container_name: dg01_dev
+    command: >
+      bash -c "python manage.py migrate &&
+              python manage.py create_superusers &&
+              python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./django:/app  # 로컬의 django 폴더를 컨테이너에 마운트
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./staticfiles:/app/staticfiles
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "1"  # Django의 디버그 모드를 활성화
+      DJANGO_SETTINGS_MODULE: "config.settings.development"  # 개발용 설정 파일 사용
+    networks:
+      - app-network
+
+  db:
+    image: postgres:14  # PostgreSQL 14 버전으로 업데이트
+    container_name: ps01_dev
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  app-network:
