@@ -1,6 +1,8 @@
 from django.urls import path
 from .views.google_auth_view import handle_google_callback, GoogleLogin, exchange_code_for_token
 
+
+
 urlpatterns = [
     # Google 소셜 로그인 URL
     # path('google/login/', GoogleLogin.as_view(), name='google_login'),
