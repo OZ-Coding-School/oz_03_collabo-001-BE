@@ -47,12 +47,15 @@ class CommentsSerializer(serializers.ModelSerializer):
     place_image = serializers.URLField(source="place.store_image")
     place_name = serializers.CharField(source="place.name")
     rating_point = serializers.IntegerField(source="rating")
-    create_date = serializers.DateField(source="created_at", format="%Y.%m.%d")
+    create_date = serializers.SerializerMethodField()
     comments_images = serializers.SerializerMethodField()
 
     class Meta:
         model = Comments
         fields = ["place_image", "place_name", "rating_point", "create_date", "content", "comments_images"]
+
+    def get_create_date(self, obj):
+        return obj.created_at.strftime("%Y.%m.%d")  # 날짜 부분만 추출
 
     def get_comments_images(self, obj):
         return [image.image.url for image in CommentImage.objects.filter(comment=obj)]
