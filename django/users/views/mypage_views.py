@@ -1,23 +1,23 @@
+from common.models import Banner
+from drf_yasg.utils import swagger_auto_schema
+from places.models import Comments
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from users.models import BookMark, CustomUser, ViewHistory
 
-from users.models import CustomUser, BookMark, ViewHistory
-from places.models import Comments
-from common.models import Banner
 from ..serializers import (
-    UserProfileSerializer,
-    BookMarkSerializer,
-    ViewHistorySerializer,
-    CommentsSerializer,
     BannerSerializer,
+    BookMarkSerializer,
+    CommentsSerializer,
+    UserProfileSerializer,
+    ViewHistorySerializer,
 )
-from drf_yasg.utils import swagger_auto_schema
+
 
 class MyProfileView(APIView):
     # permission_classes = [IsAuthenticated]
-
 
     @swagger_auto_schema()
     def get(self, request):
@@ -26,15 +26,15 @@ class MyProfileView(APIView):
         profile_serializer = UserProfileSerializer(user)
 
         # Get recent 3 bookmarks
-        bookmarks = BookMark.objects.filter(user=user).order_by('-created_at')[:3]
+        bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")[:3]
         bookmark_serializer = BookMarkSerializer(bookmarks, many=True)
 
         # Get recent 3 view histories
-        view_histories = ViewHistory.objects.filter(user=user).order_by('-created_at')[:3]
+        view_histories = ViewHistory.objects.filter(user=user).order_by("-created_at")[:3]
         view_history_serializer = ViewHistorySerializer(view_histories, many=True)
 
         # Get recent 2 comments from all users
-        recent_comments = Comments.objects.all().order_by('-created_at')[:2]
+        recent_comments = Comments.objects.all().order_by("-created_at")[:2]
         comments_serializer = CommentsSerializer(recent_comments, many=True)
 
         # Get banners

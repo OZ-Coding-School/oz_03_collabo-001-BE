@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import CustomAdminAuthenticationForm
 from .models import BookMark, ViewHistory
+
 CustomUser = get_user_model()
 
 
@@ -31,9 +32,11 @@ class CustomUserAdmin(BaseUserAdmin):
         ),
     )
 
+
 @admin.register(BookMark)
 class BookMarkAdmin(admin.ModelAdmin):
     pass
+
 
 @admin.register(ViewHistory)
 class ViewHistoryAdmin(admin.ModelAdmin):
