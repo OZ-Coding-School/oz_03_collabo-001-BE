@@ -10,8 +10,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # 개발용 데이터베이스 설정
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
+}
