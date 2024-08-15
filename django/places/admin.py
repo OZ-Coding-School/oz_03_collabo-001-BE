@@ -27,7 +27,7 @@ class RecommendedPlaceAdmin(admin.ModelAdmin):
 
 
 class ServicesIconAdmin(admin.ModelAdmin):
-    list_display = ("name", "image_url")
+    list_display = ("name", "image")
     search_fields = ("name",)
     ordering = ("name",)
 
