@@ -13,9 +13,24 @@ class ServicesIcon(CommonModel):
         return self.name
 
 
+class PlaceRegion(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    region = models.CharField(max_length=255, null=False)  # 지역 이름, Not Null
+
+    def __str__(self):
+        return self.region
+
+
+class PlaceSubcategory(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    subcategory = models.CharField(max_length=255, null=False)  # 카페,펜션,음식점... Not Null
+
+    def __str__(self):
+        return self.subcategory
+
+
 class Place(CommonModel):
     CATEGORY_CHOICES = [
-        ("애개플레이스", "애개플레이스"),
         ("펫존", "펫존"),
         ("키즈존", "키즈존"),
     ]
@@ -31,6 +46,8 @@ class Place(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     store_image = models.ImageField(upload_to="place_image/")
     service_icons = models.ManyToManyField(ServicesIcon, related_name="places")  # ManyToManyField로 변경
+    place_region = models.ManyToManyField(PlaceRegion, related_name="places")  # [서울], [경기] ....
+    place_subcategory = models.ManyToManyField(PlaceSubcategory, related_name="places")  # 카페, 펜션, 음식점 ...
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places")  # Foreign Key로 User 참조
     name = models.CharField(max_length=255, null=False)  # 장소 이름, Not Null
     description = models.TextField()  # 장소 설명
@@ -66,24 +83,6 @@ class RecommendedPlace(CommonModel):
 
     def __str__(self):
         return self.place.name if self.place else f"Recommended Place {self.id}"
-
-
-class PlaceRegion(CommonModel):
-    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
-    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="regions")  # Foreign Key로 Place 참조
-    region = models.CharField(max_length=255, null=False)  # 지역 이름, Not Null
-
-    def __str__(self):
-        return self.region
-
-
-class PlaceSubcategory(CommonModel):
-    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
-    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="subcategories")  # Foreign Key로 Place 참조
-    subcategory = models.CharField(max_length=255, null=False)  # 카페,펜션,음식점... Not Null
-
-    def __str__(self):
-        return self.subcategory
 
 
 class Comments(CommonModel):
