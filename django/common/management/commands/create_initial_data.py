@@ -1,17 +1,20 @@
 import os
 import urllib.request
-from django.core.management.base import BaseCommand
+
+from common.models import Banner, Category
+
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from common.models import Category, Banner
+from django.core.management.base import BaseCommand
+
 
 class Command(BaseCommand):
-    help = 'Create initial data for Category and Banner models'
+    help = "Create initial data for Category and Banner models"
 
     def handle(self, *args, **kwargs):
         # Check if the Category model is empty
         if Category.objects.exists():
-            self.stdout.write(self.style.WARNING('데이터가 있습니다.'))
+            self.stdout.write(self.style.WARNING("데이터가 있습니다."))
             return
 
         categories = [
@@ -47,4 +50,4 @@ class Command(BaseCommand):
                 # Close and delete the temporary file
                 img_temp.close()
 
-        self.stdout.write(self.style.SUCCESS('Initial data creation completed successfully.'))
+        self.stdout.write(self.style.SUCCESS("Initial data creation completed successfully."))

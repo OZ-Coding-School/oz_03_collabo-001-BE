@@ -21,7 +21,7 @@ class Category(CommonModel):
 class Banner(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     image = models.ImageField(upload_to="Banner_images/")
-    visible = models.BooleanField(default=True) # True or False
+    visible = models.BooleanField(default=True)  # True or False
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="banners")  # 카테고리 테이블 참조
     url_link = models.URLField()
 
