@@ -3,18 +3,12 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from places.models import Comments
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import BookMark, CustomUser, ViewHistory
-
-
-
-
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.exceptions import ValidationError
-
-
 
 from ..serializers import (
     BannerSerializer,
@@ -68,7 +62,7 @@ class UpdateProfileImageView(APIView):
     @swagger_auto_schema(operation_description="Update Profile Image")
     def post(self, request):
         user = request.user
-        profile_image = request.FILES.get('profile_image')
+        profile_image = request.FILES.get("profile_image")
 
         if not profile_image:
             raise ValidationError("No profile image provided.")
@@ -77,7 +71,6 @@ class UpdateProfileImageView(APIView):
         user.save()
 
         return Response({"message": "Profile image updated successfully."}, status=status.HTTP_200_OK)
-    
 
 
 class UpdateProfileNameView(APIView):
@@ -86,7 +79,7 @@ class UpdateProfileNameView(APIView):
     @swagger_auto_schema(operation_description="Update Profile Name")
     def post(self, request):
         user = request.user
-        new_name = request.data.get('name')
+        new_name = request.data.get("name")
 
         if not new_name:
             raise ValidationError("No name provided.")
