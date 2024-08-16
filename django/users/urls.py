@@ -17,6 +17,6 @@ urlpatterns = [
     path("google/callback/", handle_google_callback, name="google_callback"),  # Google OAuth2 콜백 URL
     path("google/token/", exchange_code_for_token.as_view(), name="google_token_exchange"),  # 인가 코드로 토큰 교환
     path("mypage/", MyProfileView.as_view(), name="mypage"),
-    path("mypage/", UpdateProfileImageView.as_view(), name="mypage"),
-    path("mypage/", UpdateProfileNameView.as_view(), name="mypage"),
+    path("mypage/update-image/", UpdateProfileImageView.as_view(), name="mypage_update_profile_images"),
+    path("mypage/update-name/", UpdateProfileNameView.as_view(), name="mypage_update_profile_names"),
 ]

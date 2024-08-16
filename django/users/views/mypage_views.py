@@ -18,7 +18,6 @@ from ..serializers import (
     ViewHistorySerializer,
 )
 
-
 class MyProfileView(APIView):
     # permission_classes = [IsAuthenticated]
 
@@ -59,7 +58,15 @@ class UpdateProfileImageView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
-    @swagger_auto_schema(operation_description="Update Profile Image")
+    @swagger_auto_schema(
+            operation_summary="Update Profile Image",
+            operation_description="Update Profile Image",
+            responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["MyPage"],
+            )
     def post(self, request):
         user = request.user
         profile_image = request.FILES.get("profile_image")
