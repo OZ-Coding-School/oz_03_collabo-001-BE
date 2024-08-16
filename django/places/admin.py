@@ -33,15 +33,11 @@ class ServicesIconAdmin(admin.ModelAdmin):
 
 
 class PlaceRegionAdmin(admin.ModelAdmin):
-    list_display = ("place", "region")
-    search_fields = ("place__name", "region")
-    ordering = ("region",)
+    list_display = ("id", "region")
 
 
 class PlaceSubcategoryAdmin(admin.ModelAdmin):
-    list_display = ("place", "subcategory")
-    search_fields = ("place__name", "subcategory")
-    ordering = ("subcategory",)
+    list_display = ("id", "subcategory")
 
 
 class CommentsAdmin(admin.ModelAdmin):

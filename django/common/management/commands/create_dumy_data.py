@@ -34,8 +34,6 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'Category "{category_name}" created successfully.'))
 
                 for i in range(10):
-                    # Download the image
-
                     # Create Banner instance
                     banner = Banner(
                         category=category,

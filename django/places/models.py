@@ -54,7 +54,6 @@ class Place(CommonModel):
     address = models.CharField(max_length=255, null=False)  # 주소, Not Null
     price_text = models.TextField(blank=True, null=True)  # 가격 텍스트, 필수 아님
     price_link = models.URLField(blank=True, null=True)  # 가격 링크, 필수 아님
-    content = models.TextField(blank=True, null=True)  # 상세 내용, 필수 아님
     rating = models.IntegerField(choices=RATING_CHOICES, blank=True, null=True)
     instruction = models.CharField(max_length=50, blank=True, null=True)  # 이용 안내, 필수 아님
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
