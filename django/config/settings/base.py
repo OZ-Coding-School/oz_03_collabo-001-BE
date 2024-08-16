@@ -1,8 +1,11 @@
 import os
 from pathlib import Path
 
-import environ
 from dotenv import load_dotenv
+
+from django.utils.translation import gettext
+
+# django.utils.translation.ugettext = gettext
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -27,8 +30,6 @@ if not os.path.exists(env_path):
 
 # .env 파일을 로드
 load_dotenv(os.path.join(BASE_DIR, ".env"))
-env = environ.Env()
-environ.Env.read_env()
 
 # 서비스 배포시 수정해야함.
 SECRET_KEY = "django-insecure-g2$d_7hc#kw_^2%6sk4va_&xg1gsd#s8mgwwbi)r7+fkli4c^m"
@@ -58,6 +59,7 @@ CUSTOM_APPS = [
 ]
 
 CUSTOM_INSTALLED_APPS = [
+    "corsheaders",
     "django.contrib.sites",
     "allauth",
     "allauth.account",
@@ -65,7 +67,7 @@ CUSTOM_INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.kakao",
     "allauth.socialaccount.providers.naver",
-    "rest_framework",
+    "rest_framework.authtoken",
     "drf_yasg",
     "django_cleanup.apps.CleanupConfig",
 ]
@@ -81,7 +83,24 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+# 모든 출처를 허용하려면 (개발 환경에서만 사용하는 것이 좋습니다)
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True  # 쿠키 및 인증 헤더를 허용합니다.
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+# SESSION_COOKIE_DOMAIN = 'localhost:5173/'
+# SESSION_COOKIE_PATH = '/'
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
@@ -93,17 +112,19 @@ ROOT_URLCONF = "config.urls"
 SITE_ID = 1
 
 # Google allauth 설정
-GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 
+GOOGLE_OAUTH2_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # Google 소셜 로그인 제공자 설정
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
             "client_id": GOOGLE_CLIENT_ID,
             "secret": GOOGLE_CLIENT_SECRET,
-            "key": env("GOOGLE_SOCIAL_KEY"),
+            "key": os.getenv("GOOGLE_SOCIAL_KEY"),
         }
     }
 }
@@ -118,9 +139,8 @@ LOGOUT_REDIRECT_URL = "/"
 # 계정 관련 기본 설정
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 TEMPLATES = [
     {
