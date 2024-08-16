@@ -7,6 +7,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import BookMark, CustomUser, ViewHistory
 
+
+
+
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import ValidationError
+
+
+
 from ..serializers import (
     BannerSerializer,
     BookMarkSerializer,
@@ -50,3 +58,44 @@ class MyProfileView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+class UpdateProfileImageView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    @swagger_auto_schema(operation_description="Update Profile Image")
+    def post(self, request):
+        user = request.user
+        profile_image = request.FILES.get('profile_image')
+
+        if not profile_image:
+            raise ValidationError("No profile image provided.")
+
+        user.profile_image = profile_image
+        user.save()
+
+        return Response({"message": "Profile image updated successfully."}, status=status.HTTP_200_OK)
+    
+
+
+class UpdateProfileNameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(operation_description="Update Profile Name")
+    def post(self, request):
+        user = request.user
+        new_name = request.data.get('name')
+
+        if not new_name:
+            raise ValidationError("No name provided.")
+
+        user.name = new_name
+        user.save()
+
+        return Response({"message": "Name updated successfully."}, status=status.HTTP_200_OK)
