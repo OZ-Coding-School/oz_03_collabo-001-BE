@@ -44,7 +44,7 @@ class Place(CommonModel):
     ]
 
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
-    store_image = models.ImageField(upload_to="place_image/")
+    store_image = models.ImageField(upload_to="place_image/")  # 대표이미지 아이콘
     service_icons = models.ManyToManyField(ServicesIcon, related_name="places")  # ManyToManyField로 변경
     place_region = models.ManyToManyField(PlaceRegion, related_name="places")  # [서울], [경기] ....
     place_subcategory = models.ManyToManyField(PlaceSubcategory, related_name="places")  # 카페, 펜션, 음식점 ...

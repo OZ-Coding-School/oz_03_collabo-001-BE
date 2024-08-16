@@ -1,4 +1,5 @@
 from common.models import Banner
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from places.models import Comments
 from rest_framework import generics, status
@@ -50,3 +51,22 @@ class MyProfileView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class ChangeProfileImageView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="마이페이지 프로필변경",
+        operation_description="마이페이지에서 프로필 사진변경",
+        tags=["mypage"],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "profile_image": openapi.Schema(type=openapi.TYPE_FILE, description="New profile image"),
+            },
+        ),
+        responses={200: openapi.Response("Success", UserProfileSerializer), 400: "Bad Request"},
+    )
+    def post(self, request, *args, **kwargs):
+        pass

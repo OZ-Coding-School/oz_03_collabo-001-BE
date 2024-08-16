@@ -34,7 +34,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     nickname = models.CharField(max_length=255, unique=True, verbose_name="닉네임", default=generate_random_nickname())
-    profile_image = models.URLField(max_length=200, null=True, blank=True, verbose_name="프로필 이미지")
+    profile_image = models.ImageField(upload_to="users/profile_image/", blank=True, null=True)
     is_staff = models.BooleanField(default=False, verbose_name="운영진")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일자")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일자")
