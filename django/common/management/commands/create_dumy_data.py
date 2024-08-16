@@ -34,6 +34,10 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f'Category "{category_name}" created successfully.'))
 
                 for i in range(10):
+                    # 마이페이지 더미데이터 1개만 생성
+                    if category_name == "마이페이지" and i != 0:
+                        continue
+
                     # Create Banner instance
                     banner = Banner(
                         category=category,
