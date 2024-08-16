@@ -38,7 +38,7 @@ class MyProfileView(APIView):
         comments_serializer = CommentsSerializer(recent_comments, many=True)
 
         # Get banners
-        banners = Banner.objects.all()
+        banners = Banner.objects.filter(category__name="마이페이지", visible=True)
         banner_serializer = BannerSerializer(banners, many=True)
 
         data = {

@@ -69,6 +69,7 @@ CUSTOM_INSTALLED_APPS = [
     "allauth.socialaccount.providers.naver",
     "rest_framework.authtoken",
     "drf_yasg",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
