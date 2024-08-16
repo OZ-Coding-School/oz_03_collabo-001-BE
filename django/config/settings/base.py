@@ -1,7 +1,10 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
+
 from django.utils.translation import gettext
+
 # django.utils.translation.ugettext = gettext
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -64,7 +67,7 @@ CUSTOM_INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.kakao",
     "allauth.socialaccount.providers.naver",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
 ]
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
@@ -82,7 +85,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-"http://localhost:5173",
+    "http://localhost:5173",
 ]
 
 # 모든 출처를 허용하려면 (개발 환경에서만 사용하는 것이 좋습니다)
