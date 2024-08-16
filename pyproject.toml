@@ -24,6 +24,9 @@ environ = "^1.0"
 django-cors-headers = "^4.4.0"
 dj-rest-auth = "^6.0.0"
 djangorestframework-simplejwt = "^5.3.1"
+drf-yasg = "^1.21.7"
+setuptools = "^72.2.0"
+
 
 
 

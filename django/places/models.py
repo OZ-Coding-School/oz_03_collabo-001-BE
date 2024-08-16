@@ -29,7 +29,8 @@ class Place(CommonModel):
     ]
 
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
-    store_icon = models.ForeignKey(
+    store_image = models.ImageField(upload_to="place_image/")
+    service_icon = models.ForeignKey(
         ServicesIcon, on_delete=models.CASCADE, related_name="places"
     )  # Foreign Key로 StoreIcon 참조
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places")  # Foreign Key로 User 참조
