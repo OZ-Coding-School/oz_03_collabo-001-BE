@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views.google_auth_view import (
     GoogleLogin,
     exchange_code_for_token,
@@ -12,5 +13,4 @@ urlpatterns = [
     path("google/callback/", handle_google_callback, name="google_callback"),  # Google OAuth2 콜백 URL
     path("google/token/", exchange_code_for_token.as_view(), name="google_token_exchange"),  # 인가 코드로 토큰 교환
     path("mypage/", MyProfileView.as_view(), name="mypage"),
-
 ]
