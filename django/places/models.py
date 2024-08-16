@@ -72,6 +72,16 @@ class PlaceImage(CommonModel):
         return f"Image for place ID {self.place.id}"
 
 
+class PlaceDescriptionImage(CommonModel):
+    place = models.ForeignKey(
+        Place, on_delete=models.CASCADE, related_name="place_description_images"
+    )  # Foreign Key로 Comment 참조
+    image = models.ImageField(upload_to="place_images/")  # 이미지 파일
+
+    def __str__(self):
+        return f"Image for place ID {self.place.id}"
+
+
 class RecommendedPlace(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     place = models.ForeignKey(
