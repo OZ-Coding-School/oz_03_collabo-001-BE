@@ -4,6 +4,7 @@ from .models import (
     CommentImage,
     Comments,
     Place,
+    PlaceImage,
     PlaceRegion,
     PlaceSubcategory,
     RecommendedPlace,
@@ -61,3 +62,4 @@ admin.site.register(PlaceRegion, PlaceRegionAdmin)
 admin.site.register(PlaceSubcategory, PlaceSubcategoryAdmin)
 admin.site.register(Comments, CommentsAdmin)
 admin.site.register(CommentImage, CommentImageAdmin)
+admin.site.register(PlaceImage)

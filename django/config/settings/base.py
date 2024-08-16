@@ -74,6 +74,7 @@ CUSTOM_INSTALLED_APPS = [
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

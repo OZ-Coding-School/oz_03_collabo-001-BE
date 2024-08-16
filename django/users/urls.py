@@ -5,8 +5,11 @@ from .views.google_auth_view import (
     exchange_code_for_token,
     handle_google_callback,
 )
-from .views.mypage_views import MyProfileView
-from .views import UpdateProfileImageView, UpdateProfileNameView
+from .views.mypage_views import (
+    MyProfileView,
+    UpdateProfileImageView,
+    UpdateProfileNameView,
+)
 
 urlpatterns = [
     # Google 소셜 로그인 URL
