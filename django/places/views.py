@@ -5,14 +5,56 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import CommentImage, Place, RecommendedPlace
+from .serializers import *
 
 
 class AegaPlaceWholeView(APIView):
+
     @swagger_auto_schema(
-        operation_summary="애개플레이스 전체 조회",
-        operation_description="애개플레이스 전체 조회",
+        operation_summary="애개플레이스 전체 게시글 조회",
+        operation_description=(
+            "애개플레이스 전체 게시글을 조회합니다. \n"
+            "place_region, place_subcategory에 따라 필터링할 수 있으며, 정렬할 수 있습니다. \n"
+            "예시: place_region=1, place_subcategory=2, ordering=-created_at \n"
+            "예시 URL: http://127.0.0.1:8000/places/?place_region=1&place_subcategory=2&ordering=-created_at \n"
+        ),
+        manual_parameters=[
+            openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                "ordering", openapi.IN_QUERY, description="정렬 (예: -created_at, rating 등)", type=openapi.TYPE_STRING
+            ),
+        ],
         responses={
-            200: openapi.Response("성공"),
+            200: openapi.Response(
+                "성공",
+                PlaceSerializer(many=True),
+                examples={
+                    "application/json": [
+                        {
+                            "name": "My Place 1",
+                            "address": "123 Example Street",
+                            "rating": 4,
+                            "description": "A lovely place for your pets.",
+                            "price_text": "20,000 KRW",
+                            "service_icons": ["Icon 1", "Icon 2"],
+                            "place_images": [
+                                "http://example.com/media/place_images/1.jpg",
+                                "http://example.com/media/place_images/2.jpg",
+                            ],
+                            "comments": [
+                                {
+                                    "comment_content": "Great place!",
+                                    "comment_images": ["http://example.com/media/comment_images/1.jpg"],
+                                    "comment_rating": 5,
+                                }
+                            ],
+                        }
+                    ]
+                },
+            ),
             400: "잘못된 요청",
         },
         tags=["AegaPlace"],
@@ -23,7 +65,7 @@ class AegaPlaceWholeView(APIView):
 
 class AegaPlaceMainView(APIView):
     @swagger_auto_schema(
-        operation_summary="애개플레이스 정보 조회",
+        operation_summary="애개플레이스 or 펫존 or 키즈존 조회",
         operation_description="애개플레이스 카테고리에 속하는 장소들의 상세 정보를 조회합니다.",
         responses={
             200: openapi.Response("성공"),
