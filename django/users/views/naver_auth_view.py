@@ -1,15 +1,12 @@
 import os
-
 import requests
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 
 User = get_user_model()
-
 
 # 네이버 소셜로그인
 class NaverExchangeCodeForToken(APIView):
