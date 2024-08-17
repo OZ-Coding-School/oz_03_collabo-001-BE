@@ -119,6 +119,44 @@ class AegaPlaceCommentsView(APIView):
         pass
 
     @swagger_auto_schema(
+        operation_summary="애개플레이스 게시물별 댓글 수정",
+        operation_description="애개플레이스 게시물별 댓글 수정",
+        responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["AegaPlace"],
+    )
+    def put(self, request, *args, **kwargs):
+        pass
+
+    @swagger_auto_schema(
+        operation_summary="애개플레이스 게시물별 댓글 삭제",
+        operation_description="애개플레이스 게시물별 댓글 삭제",
+        responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["AegaPlace"],
+    )
+    def delete(self, request, *args, **kwargs):
+        pass
+
+
+class AegaPlaceCommentsAllView(APIView):
+    @swagger_auto_schema(
+        operation_summary="애개플레이스 게시물별 댓글 조회",
+        operation_description="애개플레이스 게시물별 댓글 조회",
+        responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["AegaPlace"],
+    )
+    def get(self, request, *args, **kwargs):
+        pass
+
+    @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 등록",
         operation_description="애개플레이스 게시물별 댓글 등록",
         responses={
@@ -142,34 +180,6 @@ class AegaPlaceCommentImagesView(APIView):
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceCommentsUpdateView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 개별 게시물의 댓글 수정",
-        operation_description="애개플레이스 개별 게시물의 댓글 수정",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def post(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceCommentsDeleteView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 개별 게시물의 댓글 삭제",
-        operation_description="애개플레이스 개별 게시물의 댓글 삭제",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def post(self, request, *args, **kwargs):
         pass
 
 
