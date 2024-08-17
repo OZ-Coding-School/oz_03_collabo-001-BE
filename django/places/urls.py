@@ -10,15 +10,12 @@ urlpatterns = [
         AegaPlaceRecommendationView.as_view(),
         name="aegaplace_recommendation_view",
     ),
-    path("<str:main_category>/<int:place_pk>/", AegaPlaceView.as_view(), name="aegaplace_view"),
-    path("<str:main_category>/region/<int:region_pk>/", AegaPlaceRegionView.as_view(), name="aegaplace_region_view"),
-    path("<str:main_category>/subcategory/<int:subcategory_pk>/", AegaPlaceSubcategoryView.as_view(), name="aegaplace_subcategory_view"),
-    path("<str:main_category>/<int:place_pk>/share/", AegaPlaceMainShareView.as_view(), name="aegaplace_main_share_view"),
-    path("<str:main_category>/<int:place_pk>/bookmark/", AegaPlaceMainBookmarkView.as_view(), name="aegaplace_main_bookmark_view"),
-    path("<str:main_category>/<int:place_pk>/commets/", AegaPlaceCommentsView.as_view(), name="aegaplace_Comments_view"),
-    path("<str:main_category>/<int:place_pk>/commets/update/", AegaPlaceCommentsUpdateView.as_view(), name="aegaplace_Comments_update_view"
-    ),
-    path("<str:main_category>/<int:place_pk>/commets/delete/", AegaPlaceCommentsDeleteView.as_view(), name="aegaplace_Comments_delete_view"
-    ),
-    path("<str:main_category>/<int:place_pk>/commet/iamges/", AegaPlaceCommentImagesView.as_view(), name="aegaplace_Comment_Images_view"),
+    path("<int:place_pk>/", AegaPlaceView.as_view(), name="aegaplace_view"),
+    path("region/<int:region_pk>/", AegaPlaceRegionView.as_view(), name="aegaplace_region_view"),
+    path("subcategory/<int:subcategory_pk>/", AegaPlaceSubcategoryView.as_view(), name="aegaplace_subcategory_view"),
+    path("<int:place_pk>/share/", AegaPlaceMainShareView.as_view(), name="aegaplace_main_share_view"),
+    path("<int:place_pk>/bookmark/", AegaPlaceMainBookmarkView.as_view(), name="aegaplace_main_bookmark_view"),
+    path("<int:place_pk>/comments/", AegaPlaceCommentsAllView.as_view(), name="aegaplace_comments_all_view"),
+    path("<int:place_pk>/comments/<int:comment_pk>/", AegaPlaceCommentsView.as_view(), name="aegaplace_comments_view"),
+    path("<int:place_pk>/comments/iamges/", AegaPlaceCommentImagesView.as_view(), name="aegaplace_Comment_Images_view"),
 ]
