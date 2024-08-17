@@ -68,10 +68,13 @@ CUSTOM_INSTALLED_APPS = [
     "allauth.socialaccount.providers.kakao",
     "allauth.socialaccount.providers.naver",
     "rest_framework.authtoken",
+    "rest_framework",
     "drf_yasg",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
