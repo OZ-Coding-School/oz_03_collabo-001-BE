@@ -12,7 +12,7 @@ User = get_user_model()
 
 
 # 구글 소셜로그인
-class ExchangeCodeForToken(APIView):
+class GoogleExchangeCodeForToken(APIView):
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
     def post(self, request):
         code = request.data.get("code")
