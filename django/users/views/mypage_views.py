@@ -1,7 +1,10 @@
 from common.models import Banner
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from places.models import Comments
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,7 +41,7 @@ class MyProfileView(APIView):
         comments_serializer = CommentsSerializer(recent_comments, many=True)
 
         # Get banners
-        banners = Banner.objects.all()
+        banners = Banner.objects.filter(category__name="마이페이지", visible=True)
         banner_serializer = BannerSerializer(banners, many=True)
 
         data = {
@@ -50,3 +53,46 @@ class MyProfileView(APIView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class UpdateProfileImageView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    @swagger_auto_schema(
+        operation_summary="Update Profile Image",
+        operation_description="Update Profile Image",
+        responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["MyPage"],
+    )
+    def post(self, request):
+        user = request.user
+        profile_image = request.FILES.get("profile_image")
+
+        if not profile_image:
+            raise ValidationError("No profile image provided.")
+
+        user.profile_image = profile_image
+        user.save()
+
+        return Response({"message": "Profile image updated successfully."}, status=status.HTTP_200_OK)
+
+
+class UpdateProfileNameView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(operation_description="Update Profile Name")
+    def post(self, request):
+        user = request.user
+        new_name = request.data.get("name")
+
+        if not new_name:
+            raise ValidationError("No name provided.")
+
+        user.name = new_name
+        user.save()
+
+        return Response({"message": "Name updated successfully."}, status=status.HTTP_200_OK)

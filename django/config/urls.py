@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("users/", include("users.urls")),
+    path("places/", include("places.urls")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
@@ -37,5 +38,7 @@ urlpatterns = [
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# If DEBUG is True, serve static files in development environment.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
