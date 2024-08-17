@@ -26,6 +26,12 @@ if not os.path.exists(env_path):
             "GOOGLE_CLIENT_SECRET=efef\n"
             "GOOGLE_REDIRECT_URI=ef\n"
             "GOOGLE_SOCIAL_KEY=efef\n"
+            "NAVER_CLIENT_ID=your_naver_client_id\n"
+            "NAVER_CLIENT_SECRET=your_naver_client_secret\n"
+            "NAVER_SOCIAL_KEY=your_naver_social_key\n"
+            "KAKAO_CLIENT_ID=your_kakao_client_id\n"
+            "KAKAO_CLIENT_SECRET=your_kakao_client_secret\n"
+            "KAKAO_SOCIAL_KEY=your_kakao_social_key\n"
         )
 
 # .env 파일을 로드
@@ -117,9 +123,9 @@ SITE_ID = 1
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
-
 GOOGLE_OAUTH2_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+
 # Google 소셜 로그인 제공자 설정
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -128,7 +134,21 @@ SOCIALACCOUNT_PROVIDERS = {
             "secret": GOOGLE_CLIENT_SECRET,
             "key": os.getenv("GOOGLE_SOCIAL_KEY"),
         }
-    }
+    },
+    "naver": {
+        "APP": {
+            "client_id": os.getenv("NAVER_CLIENT_ID"),
+            "secret": os.getenv("NAVER_CLIENT_SECRET"),
+            "key": os.getenv("NAVER_SOCIAL_KEY"),
+        }
+    },
+    "kakao": {
+        "APP": {
+            "client_id": os.getenv("KAKAO_CLIENT_ID"),
+            "secret": os.getenv("KAKAO_CLIENT_SECRET"),
+            "key": os.getenv("KAKAO_SOCIAL_KEY"),
+        }
+    },
 }
 
 
