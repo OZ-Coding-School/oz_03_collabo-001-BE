@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views.google_auth_view import ExchangeCodeForToken
 from .views.mypage_views import (
     MyProfileView,
