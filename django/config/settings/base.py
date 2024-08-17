@@ -84,7 +84,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
-
+# 서비스 배포시 코드 수정해야함
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
