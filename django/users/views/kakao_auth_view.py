@@ -1,12 +1,15 @@
 import os
+
 import requests
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 
 User = get_user_model()
+
 
 # 카카오 소셜로그인
 class KakaoExchangeCodeForToken(APIView):
