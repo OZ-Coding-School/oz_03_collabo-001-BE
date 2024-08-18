@@ -10,6 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import BookMark, CustomUser, ViewHistory
 
+
+
+
 from ..serializers import (
     BannerSerializer,
     BookMarkSerializer,
@@ -44,6 +47,7 @@ class MyProfileView(APIView):
         banners = Banner.objects.filter(category__name="마이페이지", visible=True)
         banner_serializer = BannerSerializer(banners, many=True)
 
+
         data = {
             "profile": profile_serializer.data,
             "recent_bookmarks": bookmark_serializer.data,
@@ -61,9 +65,23 @@ class UpdateProfileImageView(APIView):
 
     @swagger_auto_schema(
         operation_summary="Update Profile Image",
-        operation_description="Update Profile Image",
+        operation_description="Update the user's profile image.",
+        manual_parameters=[
+            openapi.Parameter(
+                'profile_image',
+                openapi.IN_FORM,
+                description="Profile image file",
+                type=openapi.TYPE_FILE,
+                required=True,
+            )
+        ],
         responses={
-            200: openapi.Response("성공"),
+            200: openapi.Response("성공", openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Response message'),
+                }
+            )),
             400: "잘못된 요청",
         },
         tags=["MyPage"],
@@ -84,15 +102,82 @@ class UpdateProfileImageView(APIView):
 class UpdateProfileNameView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(operation_description="Update Profile Name")
+    @swagger_auto_schema(
+        operation_description="Update Profile Name",
+        manual_parameters=[
+            openapi.Parameter(
+                "name", 
+                openapi.IN_QUERY, 
+                description="New name for the user", 
+                type=openapi.TYPE_STRING,
+                required=True
+            ),
+        ],
+        responses={
+            200: openapi.Response("Success", openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Response message'),
+                }
+            )),
+            400: "Bad request",
+        },
+    )
     def post(self, request):
         user = request.user
-        new_name = request.data.get("name")
+        new_name = request.query_params.get("name")
 
         if not new_name:
             raise ValidationError("No name provided.")
 
-        user.name = new_name
+        user.nickname = new_name
         user.save()
 
         return Response({"message": "Name updated successfully."}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+class MyBookmarksView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(operation_description="Get All Bookmarks")
+    def get(self, request):
+        user = request.user
+        bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")
+        bookmark_serializer = BookMarkSerializer(bookmarks, many=True)
+
+        return Response(bookmark_serializer.data, status=status.HTTP_200_OK)
+    
+    
+
+class ViewHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(operation_description="Get All ViewHistory")
+    def get(self, request):
+        user = request.user
+        viewHistory = ViewHistory.objects.filter(user=user).order_by("-created_at")
+        viewHistorySerializer = ViewHistorySerializer(viewHistory, many=True)
+
+        return Response(viewHistorySerializer.data, status=status.HTTP_200_OK)
+    
+
+
+
+class MycommentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(operation_description="Get All MyComment")
+    def get(self, request):
+        user = request.user
+        mycomment = Comments.objects.filter(user=user).order_by("-created_at")
+        commentsSerializer = CommentsSerializer(mycomment, many=True)
+
+        return Response(commentsSerializer.data, status=status.HTTP_200_OK)
+
+
+
