@@ -10,9 +10,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import BookMark, CustomUser, ViewHistory
 
-
-
-
 from ..serializers import (
     BannerSerializer,
     BookMarkSerializer,
@@ -47,7 +44,6 @@ class MyProfileView(APIView):
         banners = Banner.objects.filter(category__name="마이페이지", visible=True)
         banner_serializer = BannerSerializer(banners, many=True)
 
-
         data = {
             "profile": profile_serializer.data,
             "recent_bookmarks": bookmark_serializer.data,
@@ -68,7 +64,7 @@ class UpdateProfileImageView(APIView):
         operation_description="Update the user's profile image.",
         manual_parameters=[
             openapi.Parameter(
-                'profile_image',
+                "profile_image",
                 openapi.IN_FORM,
                 description="Profile image file",
                 type=openapi.TYPE_FILE,
@@ -76,12 +72,15 @@ class UpdateProfileImageView(APIView):
             )
         ],
         responses={
-            200: openapi.Response("성공", openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Response message'),
-                }
-            )),
+            200: openapi.Response(
+                "성공",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="Response message"),
+                    },
+                ),
+            ),
             400: "잘못된 요청",
         },
         tags=["MyPage"],
@@ -106,20 +105,19 @@ class UpdateProfileNameView(APIView):
         operation_description="Update Profile Name",
         manual_parameters=[
             openapi.Parameter(
-                "name", 
-                openapi.IN_QUERY, 
-                description="New name for the user", 
-                type=openapi.TYPE_STRING,
-                required=True
+                "name", openapi.IN_QUERY, description="New name for the user", type=openapi.TYPE_STRING, required=True
             ),
         ],
         responses={
-            200: openapi.Response("Success", openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Response message'),
-                }
-            )),
+            200: openapi.Response(
+                "Success",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="Response message"),
+                    },
+                ),
+            ),
             400: "Bad request",
         },
     )
@@ -136,11 +134,6 @@ class UpdateProfileNameView(APIView):
         return Response({"message": "Name updated successfully."}, status=status.HTTP_200_OK)
 
 
-
-
-
-
-
 class MyBookmarksView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -151,8 +144,7 @@ class MyBookmarksView(APIView):
         bookmark_serializer = BookMarkSerializer(bookmarks, many=True)
 
         return Response(bookmark_serializer.data, status=status.HTTP_200_OK)
-    
-    
+
 
 class ViewHistoryView(APIView):
     permission_classes = [IsAuthenticated]
@@ -164,8 +156,6 @@ class ViewHistoryView(APIView):
         viewHistorySerializer = ViewHistorySerializer(viewHistory, many=True)
 
         return Response(viewHistorySerializer.data, status=status.HTTP_200_OK)
-    
-
 
 
 class MycommentView(APIView):
@@ -178,6 +168,3 @@ class MycommentView(APIView):
         commentsSerializer = CommentsSerializer(mycomment, many=True)
 
         return Response(commentsSerializer.data, status=status.HTTP_200_OK)
-
-
-

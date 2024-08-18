@@ -2,12 +2,12 @@ from django.urls import path
 
 from .views.google_auth_view import ExchangeCodeForToken
 from .views.mypage_views import (
+    MyBookmarksView,
+    MycommentView,
     MyProfileView,
     UpdateProfileImageView,
     UpdateProfileNameView,
-    MyBookmarksView,
     ViewHistoryView,
-    MycommentView
 )
 
 urlpatterns = [
@@ -18,5 +18,5 @@ urlpatterns = [
     path("mypage/update-name/", UpdateProfileNameView.as_view(), name="mypage_update_profile_names"),
     path("mypage/bookmark/", MyBookmarksView.as_view(), name="mypage_bookmark"),
     path("mypage/view-history/", ViewHistoryView.as_view(), name="mypage_view_history"),
-    path("mypage/my-comment/", MycommentView.as_view(), name="mypage_my_comment")
+    path("mypage/my-comment/", MycommentView.as_view(), name="mypage_my_comment"),
 ]
