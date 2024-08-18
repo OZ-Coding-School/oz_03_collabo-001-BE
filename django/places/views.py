@@ -60,7 +60,23 @@ class AegaPlaceWholeView(APIView):
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
-        pass
+        place_region_id = request.GET.get('place_region')
+        place_subcategory_id = request.GET.get('place_subcategory')
+        ordering = request.GET.get('ordering', '-created_at')
+
+        queryset = Place.objects.all()
+
+        if place_region_id:
+            queryset = queryset.filter(place_region__id=place_region_id)
+        
+        if place_subcategory_id:
+            queryset = queryset.filter(place_subcategory__id=place_subcategory_id)
+
+        queryset = queryset.order_by(ordering)
+
+        serializer = PlaceSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class AegaPlaceMainView(APIView):
@@ -71,6 +87,15 @@ class AegaPlaceMainView(APIView):
             200: openapi.Response("성공"),
             400: "잘못된 요청",
         },
+        manual_parameters=[
+            openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter(
+                "ordering", openapi.IN_QUERY, description="정렬 (예: -created_at, rating 등)", type=openapi.TYPE_STRING
+            ),
+        ],
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
@@ -116,6 +141,7 @@ class AegaPlaceView(APIView):
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
+        # viewhistory 추가하기 (조회기록추가)
         pass
 
 

@@ -31,8 +31,8 @@ class PlaceSubcategory(CommonModel):
 
 class Place(CommonModel):
     CATEGORY_CHOICES = [
-        ("펫존", "펫존"),
-        ("키즈존", "키즈존"),
+        ("pet_zone", "펫존"),
+        ("kid_zone", "키즈존"),
     ]
 
     RATING_CHOICES = [
