@@ -1,7 +1,11 @@
 import os
 
 import requests
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.serializers import TokenVerifySerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.conf import settings
@@ -86,3 +90,15 @@ class GoogleExchangeCodeForToken(APIView):
         except requests.exceptions.RequestException as e:
             # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
+
+
+class GoogleSocialLogout(APIView):
+    # 로그아웃 - 쿠키에서 토큰을 삭제하는 코드
+    def post(self, request):
+        response = JsonResponse({"message": "Successfully logged out"})
+
+        # 쿠키에서 'refresh_token'과 'access_token'을 삭제합니다.
+        response.delete_cookie("refresh_token")
+        response.delete_cookie("access_token")
+
+        return response
