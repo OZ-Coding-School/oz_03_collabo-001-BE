@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("users/", include("users.urls")),
+    path("api/", include("users.urls")),  # 'api/' 네임스페이스 추가
     path("places/", include("places.urls")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
