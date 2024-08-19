@@ -71,12 +71,7 @@ class AegaPlaceWholeView(APIView):
         page = request.GET.get('page', 1)  # 기본 페이지 번호 및 페이지 크기 설정
         page_size = request.GET.get('page_size', 10)  # 기본 페이지 크기를 10으로 설정
 
-        
-
         queryset = Place.objects.all()
-
-        print(queryset.count())
-
 
         if place_region_id:
             queryset = queryset.filter(place_region__id=place_region_id)
@@ -91,7 +86,7 @@ class AegaPlaceWholeView(APIView):
         paginator.page_size = page_size
         result_page = paginator.paginate_queryset(queryset, request)
 
-        serializer = PlaceSerializer(queryset, many=True)
+        serializer = PlaceSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
 
