@@ -7,6 +7,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from rest_framework import status
+from rest_framework_simplejwt.serializers import TokenVerifySerializer
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -98,3 +102,4 @@ class GoogleSocialLogout(APIView):
         response.delete_cookie("access_token")
 
         return response
+    
