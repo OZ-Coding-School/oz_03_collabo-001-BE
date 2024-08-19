@@ -81,14 +81,29 @@ class PlaceDescriptionImage(CommonModel):
     def __str__(self):
         return f"Image for place ID {self.place.id}"
 
+class RecommendTags(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    tag = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.tag
+
+class RecommendCategory(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    name = models.CharField(max_length=255, null=False)  # 카테고리 이름, Not Null
+
+    def __str__(self):
+        return self.name
 
 class RecommendedPlace(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     place = models.ForeignKey(
         Place, on_delete=models.CASCADE, related_name="recommended_places"
     )  # Foreign Key로 places 테이블 참조
+    category = models.ForeignKey(RecommendCategory, on_delete=models.CASCADE, related_name="category")
     content = models.TextField(blank=True, null=True)  # 내용, 필수 아님
-    tags = models.CharField(max_length=255, blank=True, null=True)  # 해쉬태그, 필수 아님
+    tags = models.ManyToManyField(RecommendTags, related_name="recommended_places")  
+
 
     def __str__(self):
         return self.place.name if self.place else f"Recommended Place {self.id}"

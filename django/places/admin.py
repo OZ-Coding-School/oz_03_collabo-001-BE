@@ -9,6 +9,8 @@ from .models import (
     PlaceSubcategory,
     RecommendedPlace,
     ServicesIcon,
+    RecommendCategory,
+    RecommendTags,
 )
 
 
@@ -18,14 +20,6 @@ class PlaceAdmin(admin.ModelAdmin):
     search_fields = ("name", "address", "category")
     list_filter = ("category", "rating")
     ordering = ("name",)
-
-
-class RecommendedPlaceAdmin(admin.ModelAdmin):
-    list_display = ("place", "tags", "created_at", "updated_at")
-    search_fields = ("place__name", "tags")
-    list_filter = ("created_at", "updated_at")
-    ordering = ("-created_at",)
-
 
 class ServicesIconAdmin(admin.ModelAdmin):
     list_display = ("name", "image")
@@ -56,10 +50,12 @@ class CommentImageAdmin(admin.ModelAdmin):
 
 # 모델을 Admin 사이트에 등록
 admin.site.register(Place, PlaceAdmin)
-admin.site.register(RecommendedPlace, RecommendedPlaceAdmin)
+admin.site.register(RecommendedPlace)
 admin.site.register(ServicesIcon, ServicesIconAdmin)
 admin.site.register(PlaceRegion, PlaceRegionAdmin)
 admin.site.register(PlaceSubcategory, PlaceSubcategoryAdmin)
 admin.site.register(Comments, CommentsAdmin)
 admin.site.register(CommentImage, CommentImageAdmin)
 admin.site.register(PlaceImage)
+admin.site.register(RecommendCategory)
+admin.site.register(RecommendTags)

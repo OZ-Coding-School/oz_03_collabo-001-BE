@@ -23,17 +23,43 @@ class CommentsSerializer(serializers.ModelSerializer):
         model = Comments
         fields = ['content', 'rating', 'comment_images']
 
-class RecommendedPlaceSerializer(serializers.ModelSerializer):
+
+from rest_framework import serializers
+from .models import RecommendedPlace, RecommendCategory, RecommendTags, Place, PlaceRegion
+
+class RecommendCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = RecommendedPlace
-        fields = ['place', 'content', 'tags']
+        model = RecommendCategory
+        fields = ['name']
+
+class RecommendTagsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecommendTags
+        fields = ['id', 'tag']
+
+class PlaceRegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceRegion
+        fields = ['region']
+
+
 
 class PlaceSerializer(serializers.ModelSerializer):
     service_icons = ServicesIconSerializer(many=True)
     place_images = PlaceImageSerializer(many=True)
     comments = CommentsSerializer(many=True)
-    recommended_places = RecommendedPlaceSerializer(many=True)
 
+    
     class Meta:
         model = Place
-        fields = ['name', 'address', 'rating', 'description', 'price_text', 'service_icons', 'place_images', 'comments', 'recommended_places']
+        fields = ['name', 'address', 'place_region', 'rating', 'description', 'price_text', 'service_icons', 'place_images', 'comments']
+
+
+class RecommendedPlaceSerializer(serializers.ModelSerializer):
+    category = RecommendCategorySerializer()
+    tags = RecommendTagsSerializer(many=True, read_only=True)
+    place = PlaceSerializer()
+
+    class Meta:
+        model = RecommendedPlace
+        fields = ['place', 'content', 'category', 'tags']

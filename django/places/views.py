@@ -3,9 +3,13 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 from .models import CommentImage, Place, RecommendedPlace
 from .serializers import *
+from common.serializers import *
+from common.models import *
 
 
 class AegaPlaceWholeView(APIView):
@@ -63,8 +67,16 @@ class AegaPlaceWholeView(APIView):
         place_region_id = request.GET.get('place_region')
         place_subcategory_id = request.GET.get('place_subcategory')
         ordering = request.GET.get('ordering', '-created_at')
+                
+        page = request.GET.get('page', 1)  # 기본 페이지 번호 및 페이지 크기 설정
+        page_size = request.GET.get('page_size', 10)  # 기본 페이지 크기를 10으로 설정
+
+        
 
         queryset = Place.objects.all()
+
+        print(queryset.count())
+
 
         if place_region_id:
             queryset = queryset.filter(place_region__id=place_region_id)
@@ -74,33 +86,76 @@ class AegaPlaceWholeView(APIView):
 
         queryset = queryset.order_by(ordering)
 
+        # 페이지네이션 적용
+        paginator = PageNumberPagination()
+        paginator.page_size = page_size
+        result_page = paginator.paginate_queryset(queryset, request)
+
         serializer = PlaceSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response(serializer.data)
 
 
 
 class AegaPlaceMainView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+
     @swagger_auto_schema(
         operation_summary="애개플레이스 or 펫존 or 키즈존 조회",
-        operation_description="애개플레이스 카테고리에 속하는 장소들의 상세 정보를 조회합니다.",
+        operation_description="애개플레이스 카테고리에 속하는 장소들의 상세 정보를 조회합니다. \n"
+        "/places/main/main/ 애개플레이스 정보 조회\n"
+        "/places/pet/main/ 펫존 정보 조회\n"
+        "/places/kids/main/ 키즈존 정보 조회\n",
         responses={
             200: openapi.Response("성공"),
             400: "잘못된 요청",
         },
         manual_parameters=[
-            openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
             openapi.Parameter(
-                "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
-            ),
-            openapi.Parameter(
-                "ordering", openapi.IN_QUERY, description="정렬 (예: -created_at, rating 등)", type=openapi.TYPE_STRING
+                "main_category", openapi.IN_PATH, description="main, pet, kids", type=openapi.TYPE_STRING
             ),
         ],
         tags=["AegaPlace - 1 - mainpage"],
     )
     def get(self, request, *args, **kwargs):
+        main_category = kwargs.get("main_category")
+
+        if main_category == "main":
+            main_category = "애개플레이스"
+        elif main_category == "pet":
+            main_category = "펫존"
+        elif main_category == "kids":
+            main_category = "키즈존"
+
+
+        banner_obj = Banner.objects.filter(category__name=main_category, visible=True)
+        banner_serializer = BannerSerializer(banner_obj, many=True)
         
-        pass
+        recommandedplace_obj = RecommendedPlace.objects.filter(category__name=main_category)
+        recommandedplace_serializer = RecommendedPlaceSerializer(recommandedplace_obj, many=True)
+
+
+        if main_category == "애개플레이스":
+            new_places_obj = Place.objects.all().order_by("-created_at")[:6]
+        elif main_category == "펫존":
+            new_places_obj = Place.objects.filter(category="pet_zone").order_by("-created_at")[:6]
+        elif main_category == "키즈존":
+            new_places_obj = Place.objects.filter(category="kid_zone").order_by("-created_at")[:6]
+
+        
+        new_places_serializer = PlaceSerializer(new_places_obj, many=True)
+
+        data = {
+            "banners": banner_serializer.data,
+            "recommandedplaces": recommandedplace_serializer.data,
+            "new_places": new_places_serializer.data,
+            "region_places": new_places_serializer.data,
+            "subcategory": new_places_serializer.data,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
 
 
 class AegaPlaceBannerView(APIView):
