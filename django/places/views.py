@@ -96,9 +96,10 @@ class AegaPlaceMainView(APIView):
                 "ordering", openapi.IN_QUERY, description="정렬 (예: -created_at, rating 등)", type=openapi.TYPE_STRING
             ),
         ],
-        tags=["AegaPlace"],
+        tags=["AegaPlace - 1 - mainpage"],
     )
     def get(self, request, *args, **kwargs):
+        
         pass
 
 
