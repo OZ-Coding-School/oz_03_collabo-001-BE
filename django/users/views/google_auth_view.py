@@ -22,7 +22,7 @@ class GoogleExchangeCodeForToken(APIView):
             "code": code,
             "client_id": os.getenv("GOOGLE_CLIENT_ID"),
             "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-            "redirect_uri": "http://localhost:5173",
+            "redirect_uri": "http://localhost:5173/google/auth",
             "grant_type": "authorization_code",
         }
 
