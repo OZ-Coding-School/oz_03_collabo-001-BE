@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTTokenRefreshView
 from rest_framework_simplejwt.views import TokenVerifyView
 
 from django.urls import path
@@ -21,6 +22,8 @@ urlpatterns = [
     path("kakao/login/callback/", KakaoExchangeCodeForToken.as_view(), name="kakao_callback"),  # 카카오 로그인
     # 토큰 유효성 검사 엔드포인트
     path("token/verify/", TokenVerifyView.as_view(), name="token-verify"),
+    # 액세스 토큰 새로 발급해주는 엔드포인트
+    path("api/token/refresh/", SimpleJWTTokenRefreshView.as_view(), name="token_refresh"),
     path("mypage/", MyProfileView.as_view(), name="mypage"),
     path("mypage/update-image/", UpdateProfileImageView.as_view(), name="mypage_update_profile_images"),
     path("mypage/update-name/", UpdateProfileNameView.as_view(), name="mypage_update_profile_names"),

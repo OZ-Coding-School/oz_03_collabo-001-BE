@@ -2,10 +2,7 @@ import os
 
 import requests
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from rest_framework_simplejwt.serializers import TokenVerifySerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.conf import settings
@@ -23,8 +20,8 @@ class GoogleExchangeCodeForToken(APIView):
         token_endpoint = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
-            "client_id": os.environ.get("GOOGLE_OAUTH2_CLIENT_ID"),
-            "client_secret": os.environ.get("GOOGLE_OAUTH2_CLIENT_SECRET"),
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
             "redirect_uri": "http://localhost:5173",
             "grant_type": "authorization_code",
         }
