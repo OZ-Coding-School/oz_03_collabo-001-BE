@@ -20,12 +20,11 @@ from ..serializers import (
 
 
 class MyProfileView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema()
     def get(self, request):
-        # user = request.user
-        user = CustomUser.objects.get(id=1)
+        user = request.user
         profile_serializer = UserProfileSerializer(user)
 
         # Get recent 3 bookmarks
