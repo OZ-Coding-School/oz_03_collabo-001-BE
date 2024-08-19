@@ -20,3 +20,14 @@ cd oz_03_collabo-001-BE
 ```bash
 docker-compose -f docker-compose-dev.yml up
 ```
+
+
+### 스웨거 페이지 (API 테스트)
+```
+http://127.0.0.1:8000/swagger/
+```
+
+### 리독 페이지 (API 문서)
+```
+http://127.0.0.1:8000/redoc/
+```
