@@ -34,8 +34,6 @@ class UserTokenVerifyView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        if getattr(self, "swagger_fake_view", False):
-            return None  # Skip actual processing during schema generation
 
         # 쿠키에서 access 토큰 가져오기
         token = request.COOKIES.get("access_token")
@@ -57,9 +55,6 @@ class RefreshAccessTokenView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        if getattr(self, "swagger_fake_view", False):
-            return None  # Skip actual processing during schema generation
-
         # 쿠키에서 refresh 토큰 가져오기
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
