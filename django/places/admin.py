@@ -11,6 +11,7 @@ from .models import (
     ServicesIcon,
     RecommendCategory,
     RecommendTags,
+    PlaceDescriptionImage
 )
 
 
@@ -59,3 +60,4 @@ admin.site.register(CommentImage, CommentImageAdmin)
 admin.site.register(PlaceImage)
 admin.site.register(RecommendCategory)
 admin.site.register(RecommendTags)
+admin.site.register(PlaceDescriptionImage)

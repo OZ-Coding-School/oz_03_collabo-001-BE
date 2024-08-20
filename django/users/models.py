@@ -54,7 +54,6 @@ class BookMark(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 User 참조
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="bookmarks")  # Foreign Key로 Place 참조
-    bookmark_check = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.nickname} - {self.place.name}"
@@ -71,7 +70,7 @@ class ViewHistory(CommonModel):
         Place, on_delete=models.CASCADE, related_name="view_histories"
     )  # Foreign Key로 Place 참조
     bookmark = models.ForeignKey(
-        BookMark, on_delete=models.CASCADE, related_name="view_histories"
+        BookMark, on_delete=models.CASCADE, related_name="view_histories", null=True, blank=True
     )  # Foreign Key로 Bookmark 참조
 
     def __str__(self):

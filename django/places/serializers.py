@@ -1,47 +1,99 @@
 from rest_framework import serializers
-from .models import Place, ServicesIcon, PlaceImage, CommentImage, RecommendedPlace, Comments
+from .models import (
+    Place,
+    ServicesIcon,
+    PlaceImage,
+    CommentImage,
+    RecommendedPlace,
+    Comments,
+    RecommendCategory,
+    RecommendTags,
+    PlaceRegion,
+    Comments,
+    PlaceDescriptionImage,
+)
+from common.models import Banner
+from users.models import BookMark
+
+
+class MainPagePlaceSerializer(serializers.ModelSerializer):
+    comments_count = serializers.SerializerMethodField()
+    is_bookmarked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Place
+        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "rating", "comments_count"]
+
+    def get_comments_count(self, obj):
+        user = self.context["request"].user
+        return Comments.objects.filter(user=user, place=obj).count()
+
+    def get_is_bookmarked(self, obj):
+        user = self.context["request"].user
+        return BookMark.objects.filter(user=user, place=obj).exists()
+
+
+class MainPageBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banner
+        fields = ["id", "image", "url_link"]
+
+
+class MainPageRecommendedPlaceSerializer(serializers.ModelSerializer):
+    places = MainPagePlaceSerializer(source="place", read_only=True)
+
+    class Meta:
+        model = RecommendedPlace
+        fields = ["id", "content", "tags", "places"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Customize the representation if needed
+        return representation
+
 
 class ServicesIconSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServicesIcon
-        fields = ['name', 'image']
+        fields = ["name", "image"]
+
 
 class PlaceImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceImage
-        fields = ['image']
+        fields = ["image"]
+
 
 class CommentImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentImage
-        fields = ['image']
+        fields = ["image"]
+
 
 class CommentsSerializer(serializers.ModelSerializer):
     comment_images = CommentImageSerializer(many=True)
 
     class Meta:
         model = Comments
-        fields = ['content', 'rating', 'comment_images']
+        fields = ["content", "rating", "comment_images"]
 
-
-from rest_framework import serializers
-from .models import RecommendedPlace, RecommendCategory, RecommendTags, Place, PlaceRegion
 
 class RecommendCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendCategory
-        fields = ['name']
+        fields = ["name"]
+
 
 class RecommendTagsSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecommendTags
-        fields = ['id', 'tag']
+        fields = ["id", "tag"]
+
 
 class PlaceRegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceRegion
-        fields = ['region']
-
+        fields = ["region"]
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -49,10 +101,18 @@ class PlaceSerializer(serializers.ModelSerializer):
     place_images = PlaceImageSerializer(many=True)
     comments = CommentsSerializer(many=True)
 
-    
     class Meta:
         model = Place
-        fields = ['name', 'address', 'place_region', 'rating', 'description', 'price_text', 'service_icons', 'place_images', 'comments']
+        fields = [
+            "name",
+            "address",
+            "place_region",
+            "rating",
+            "price_text",
+            "service_icons",
+            "place_images",
+            "comments",
+        ]
 
 
 class RecommendedPlaceSerializer(serializers.ModelSerializer):
@@ -62,4 +122,91 @@ class RecommendedPlaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecommendedPlace
-        fields = ['place', 'content', 'category', 'tags']
+        fields = ["place", "content", "category", "tags"]
+
+
+class PlaceDescriptionImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceDescriptionImage
+        fields = ["image"]  # Assuming PlaceDescriptionImage model has an image_url field
+
+class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comments
+        fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
+    
+    def get_images(self, obj):
+        # Fetch the first 2 images related to this comment
+        images = CommentImage.objects.filter(comment=obj)[:3]
+        return CommentImageSerializer(images, many=True).data
+
+class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
+    images = CommentImageSerializer(many=True, read_only=True, source='comment_images')
+
+    class Meta:
+        model = Comments
+        fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
+
+    def create(self, validated_data):
+        place_id = self.context['place']
+        user = self.context['user']
+        place = Place.objects.get(id=place_id)
+        comment = Comments.objects.create(place=place, user=user, **validated_data)
+        return comment
+
+
+
+
+
+class AegaPlaceDetailSerializer(serializers.ModelSerializer):
+    images = PlaceImageSerializer(source="place_images", many=True, read_only=True)
+    bookmark = serializers.SerializerMethodField()
+    service_icons = ServicesIconSerializer(many=True, read_only=True)
+    description_images = serializers.SerializerMethodField()
+    comment_images = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Place
+        fields = [
+            "images",
+            "bookmark",
+            "store_image",
+            "name",
+            "address",
+            "rating",
+            "description_tags",
+            "price_text",
+            "address",
+            "service_icons",
+            "description_images",
+            "comment_images",
+            "comments_count",
+            "comments",
+            "instruction",
+        ]
+
+    def get_comments_count(self, obj):
+        return Comments.objects.filter(place=obj).count()
+
+    def get_description_images(self, obj):
+        # Filter PlaceDescriptionImage based on the current place
+        description_images = PlaceDescriptionImage.objects.filter(place=obj)
+        return PlaceDescriptionImageSerializer(description_images, many=True).data
+
+    def get_comment_images(self, obj):
+        # Filter CommentImage based on comments related to the current place
+        comment_images = CommentImage.objects.filter(comment__place=obj)[:3]
+        return CommentImageSerializer(comment_images, many=True).data
+
+    def get_comments(self, obj):
+        # Filter Comments based on the current place
+        comments = Comments.objects.filter(place=obj)[:3]
+        return PlaceDetailCommentsSerializer(comments, many=True).data
+
+    def get_bookmark(self, obj):
+        user = self.context["request"].user
+        return BookMark.objects.filter(user=user, place=obj).exists()
