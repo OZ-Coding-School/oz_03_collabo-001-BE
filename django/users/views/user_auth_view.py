@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +9,6 @@ from rest_framework_simplejwt.exceptions import (
     TokenError,
 )
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from users.serializers import EmptySerializer
 
 from django.conf import settings
 from django.middleware import csrf
@@ -30,10 +29,9 @@ class CookieJWTAuthentication(JWTAuthentication):
         return self.get_user(validated_token), validated_token
 
 
-class UserTokenVerifyView(generics.GenericAPIView):
+class UserTokenVerifyView(APIView):
     authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
         if getattr(self, "swagger_fake_view", False):
@@ -55,9 +53,8 @@ class UserTokenVerifyView(generics.GenericAPIView):
             return Response({"error": "Invalid access token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class RefreshAccessTokenView(generics.GenericAPIView):
+class RefreshAccessTokenView(APIView):
     permission_classes = [AllowAny]
-    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
         if getattr(self, "swagger_fake_view", False):
