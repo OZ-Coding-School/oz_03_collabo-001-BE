@@ -15,23 +15,21 @@ from django.http import JsonResponse
 User = get_user_model()
 
 
-# 구글 소셜로그인
-class GoogleExchangeCodeForToken(APIView):
+class NaverExchangeCodeForToken(APIView):
     permission_classes = [AllowAny]
 
-    # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
     def post(self, request):
         code = request.data.get("code")
-        token_endpoint = "https://oauth2.googleapis.com/token"
+        state = request.data.get("state")
+        token_endpoint = "https://nid.naver.com/oauth2.0/token"
         data = {
-            "code": code,
-            "client_id": "94278847271-9m1diumhkn22g44iv999tubbkk5t54ln.apps.googleusercontent.com",
-            "client_secret": "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",
-            "redirect_uri": "http://localhost:5173/google/auth",
             "grant_type": "authorization_code",
+            "client_id": "YOUR_NAVER_CLIENT_ID",
+            "client_secret": "YOUR_NAVER_CLIENT_SECRET",
+            "code": code,
+            "state": state,
         }
 
-        # 엑세스 토큰을 받는 코드
         try:
             response = requests.post(token_endpoint, data=data)
             response.raise_for_status()
@@ -41,34 +39,29 @@ class GoogleExchangeCodeForToken(APIView):
             if not access_token:
                 return JsonResponse({"error": "Failed to obtain access token"}, status=400)
 
-            # 액세스토큰을 통해 유저정보를 요청하는 코드
-            userinfo_endpoint = "https://www.googleapis.com/oauth2/v3/userinfo"
+            userinfo_endpoint = "https://openapi.naver.com/v1/nid/me"
             headers = {"Authorization": f"Bearer {access_token}"}
             user_info_response = requests.get(userinfo_endpoint, headers=headers)
             user_info_response.raise_for_status()
-            user_info = user_info_response.json()
+            user_info = user_info_response.json().get("response", {})
 
-            # user모델에서 필요한 정보 가져오는 코드
             email = user_info.get("email")
             if not email:
                 return JsonResponse({"error": "Email not found in user info"}, status=400)
 
             user_data = {
                 "email": email,
-                "profile_image": user_info.get("picture"),
-                "nickname ": generate_random_nickname(),
+                "profile_image": user_info.get("profile_image"),
+                "nickname": generate_random_nickname(),
             }
-            # 유저 정보 생성
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
 
-            # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
             }
 
-            # jwt토큰을 json형태로 쿠키에 전달하는 코드
             response = JsonResponse(response_data)
             response.set_cookie(
                 "refresh_token",
@@ -90,11 +83,9 @@ class GoogleExchangeCodeForToken(APIView):
             return response
 
         except requests.exceptions.RequestException as e:
-            # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
 
-
-class GoogleSocialLogout(APIView):
+class SocialLogout(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
