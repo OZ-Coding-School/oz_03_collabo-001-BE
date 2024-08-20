@@ -1,17 +1,18 @@
+from common.models import *
+from common.serializers import *
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
+from users.models import CustomUser, ViewHistory
+
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import CommentImage, Place, RecommendedPlace
-from users.models import ViewHistory, CustomUser
 from .serializers import *
-from common.serializers import *
-from common.models import *
-from django.views.decorators.csrf import csrf_exempt
 
 
 class AegaPlaceWholeView(APIView):

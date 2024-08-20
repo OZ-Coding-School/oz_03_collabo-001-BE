@@ -4,14 +4,14 @@ from .models import (
     CommentImage,
     Comments,
     Place,
+    PlaceDescriptionImage,
     PlaceImage,
     PlaceRegion,
     PlaceSubcategory,
-    RecommendedPlace,
-    ServicesIcon,
     RecommendCategory,
+    RecommendedPlace,
     RecommendTags,
-    PlaceDescriptionImage
+    ServicesIcon,
 )
 
 
@@ -21,6 +21,7 @@ class PlaceAdmin(admin.ModelAdmin):
     search_fields = ("name", "address", "category")
     list_filter = ("category", "rating")
     ordering = ("name",)
+
 
 class ServicesIconAdmin(admin.ModelAdmin):
     list_display = ("name", "image")

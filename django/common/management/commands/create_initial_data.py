@@ -1,6 +1,5 @@
 from common.models import Category
-from places.models import RecommendCategory
-from places.models import PlaceRegion, PlaceSubcategory
+from places.models import PlaceRegion, PlaceSubcategory, RecommendCategory
 
 from django.core.management.base import BaseCommand
 
@@ -24,7 +23,6 @@ class Command(BaseCommand):
                 Category.objects.create(name=name)
                 self.stdout.write(self.style.SUCCESS(f'Category "{name}" created successfully.'))
 
-                
         if RecommendCategory.objects.exists():
             self.stdout.write(self.style.WARNING("RecommendCategory 데이터가 있습니다."))
         else:

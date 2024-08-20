@@ -1,19 +1,19 @@
-from rest_framework import serializers
-from .models import (
-    Place,
-    ServicesIcon,
-    PlaceImage,
-    CommentImage,
-    RecommendedPlace,
-    Comments,
-    RecommendCategory,
-    RecommendTags,
-    PlaceRegion,
-    Comments,
-    PlaceDescriptionImage,
-)
 from common.models import Banner
+from rest_framework import serializers
 from users.models import BookMark
+
+from .models import (
+    CommentImage,
+    Comments,
+    Place,
+    PlaceDescriptionImage,
+    PlaceImage,
+    PlaceRegion,
+    RecommendCategory,
+    RecommendedPlace,
+    RecommendTags,
+    ServicesIcon,
+)
 
 
 class MainPagePlaceSerializer(serializers.ModelSerializer):
@@ -130,34 +130,33 @@ class PlaceDescriptionImageSerializer(serializers.ModelSerializer):
         model = PlaceDescriptionImage
         fields = ["image"]  # Assuming PlaceDescriptionImage model has an image_url field
 
+
 class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
 
     class Meta:
         model = Comments
         fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
-    
+
     def get_images(self, obj):
         # Fetch the first 2 images related to this comment
         images = CommentImage.objects.filter(comment=obj)[:3]
         return CommentImageSerializer(images, many=True).data
 
+
 class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
-    images = CommentImageSerializer(many=True, read_only=True, source='comment_images')
+    images = CommentImageSerializer(many=True, read_only=True, source="comment_images")
 
     class Meta:
         model = Comments
         fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
 
     def create(self, validated_data):
-        place_id = self.context['place']
-        user = self.context['user']
+        place_id = self.context["place"]
+        user = self.context["user"]
         place = Place.objects.get(id=place_id)
         comment = Comments.objects.create(place=place, user=user, **validated_data)
         return comment
-
-
-
 
 
 class AegaPlaceDetailSerializer(serializers.ModelSerializer):
