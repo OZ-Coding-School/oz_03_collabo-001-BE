@@ -34,7 +34,10 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     nickname = models.CharField(
-        max_length=255, unique=True, verbose_name="닉네임", default=generate_random_nickname(), null=True
+        max_length=255,
+        unique=True,
+        verbose_name="닉네임",
+        default=generate_random_nickname(),
     )
     profile_image = models.URLField(max_length=200, null=True, blank=True, verbose_name="프로필 이미지")
     is_staff = models.BooleanField(default=False, verbose_name="운영진")
