@@ -1,9 +1,7 @@
 import os
 
 import requests
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import generate_random_nickname
@@ -25,9 +23,9 @@ class GoogleExchangeCodeForToken(APIView):
         token_endpoint = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
-            "client_id": "94278847271-9m1diumhkn22g44iv999tubbkk5t54ln.apps.googleusercontent.com",
-            "client_secret": "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",
-            "redirect_uri": "http://localhost:5173/google/auth",
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
             "grant_type": "authorization_code",
         }
 
@@ -56,7 +54,7 @@ class GoogleExchangeCodeForToken(APIView):
             user_data = {
                 "email": email,
                 "profile_image": user_info.get("picture"),
-                "nickname ": generate_random_nickname(),
+                "nickname": generate_random_nickname(),
             }
             # 유저 정보 생성
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
@@ -92,13 +90,3 @@ class GoogleExchangeCodeForToken(APIView):
         except requests.exceptions.RequestException as e:
             # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
-
-
-class GoogleSocialLogout(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
-        return response

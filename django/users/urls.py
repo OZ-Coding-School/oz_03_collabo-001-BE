@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views.google_auth_view import GoogleExchangeCodeForToken, GoogleSocialLogout
-from .views.kakao_auth_view import KakaoExchangeCodeForToken, KakaoSocialLogout
+from .views.google_auth_view import GoogleExchangeCodeForToken
+from .views.kakao_auth_view import KakaoExchangeCodeForToken
 from .views.mypage_views import (
     MyBookmarksView,
     MycommentView,
@@ -10,19 +10,19 @@ from .views.mypage_views import (
     UpdateProfileNameView,
     ViewHistoryView,
 )
-from .views.naver_auth_view import NaverExchangeCodeForToken, NaverSocialLogout
-from .views.user_auth_view import RefreshAccessTokenView, UserTokenVerifyView
+from .views.naver_auth_view import NaverExchangeCodeForToken
+from .views.user_auth_view import (
+    RefreshAccessTokenView,
+    SocialLogout,
+    UserTokenVerifyView,
+)
 
 urlpatterns = [
-    # google social
+    # social login endpoint
     path("google/login/callback/", GoogleExchangeCodeForToken.as_view(), name="google_callback"),
-    path("google/logout/", GoogleSocialLogout.as_view(), name="google-logout"),
-    # naver social
     path("naver/login/callback/", NaverExchangeCodeForToken.as_view(), name="naver_callback"),
-    path("naver/logout/", NaverSocialLogout.as_view(), name="google-logout"),
-    # kakao social
     path("kakao/login/callback/", KakaoExchangeCodeForToken.as_view(), name="kakao_callback"),
-    path("kakao/logout/", KakaoSocialLogout.as_view(), name="google-logout"),
+    path("logout/", SocialLogout.as_view(), name="kakao_callback"),
     # user_auth
     path("token/verify/", UserTokenVerifyView.as_view(), name="token-verify"),
     path("token/refresh/", RefreshAccessTokenView.as_view(), name="token_refresh"),
