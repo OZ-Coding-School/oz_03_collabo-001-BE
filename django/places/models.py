@@ -31,8 +31,8 @@ class PlaceSubcategory(CommonModel):
 
 class Place(CommonModel):
     CATEGORY_CHOICES = [
-        ("펫존", "펫존"),
-        ("키즈존", "키즈존"),
+        ("pet_zone", "펫존"),
+        ("kid_zone", "키즈존"),
     ]
 
     RATING_CHOICES = [
@@ -50,13 +50,13 @@ class Place(CommonModel):
     place_subcategory = models.ManyToManyField(PlaceSubcategory, related_name="places")  # 카페, 펜션, 음식점 ...
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places")  # Foreign Key로 User 참조
     name = models.CharField(max_length=255, null=False)  # 장소 이름, Not Null
-    description = models.TextField()  # 장소 설명
+    description_tags = models.TextField()  # 장소 설명
     address = models.CharField(max_length=255, null=False)  # 주소, Not Null
     price_text = models.TextField(blank=True, null=True)  # 가격 텍스트, 필수 아님
     price_link = models.URLField(blank=True, null=True)  # 가격 링크, 필수 아님
     rating = models.IntegerField(choices=RATING_CHOICES, blank=True, null=True)
-    instruction = models.CharField(max_length=50, blank=True, null=True)  # 이용 안내, 필수 아님
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    instruction = models.TextField(blank=True, null=True)  # 상세내용 텍스트
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)  # 메인페이지 선택
 
     def __str__(self):
         return self.name
@@ -82,13 +82,30 @@ class PlaceDescriptionImage(CommonModel):
         return f"Image for place ID {self.place.id}"
 
 
+class RecommendTags(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    tag = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.tag
+
+
+class RecommendCategory(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
+    name = models.CharField(max_length=255, null=False)  # 카테고리 이름, Not Null
+
+    def __str__(self):
+        return self.name
+
+
 class RecommendedPlace(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     place = models.ForeignKey(
         Place, on_delete=models.CASCADE, related_name="recommended_places"
     )  # Foreign Key로 places 테이블 참조
+    category = models.ForeignKey(RecommendCategory, on_delete=models.CASCADE, related_name="category")
     content = models.TextField(blank=True, null=True)  # 내용, 필수 아님
-    tags = models.CharField(max_length=255, blank=True, null=True)  # 해쉬태그, 필수 아님
+    tags = models.ManyToManyField(RecommendTags, related_name="recommended_places")
 
     def __str__(self):
         return self.place.name if self.place else f"Recommended Place {self.id}"
