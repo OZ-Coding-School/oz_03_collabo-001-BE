@@ -1,8 +1,7 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated ,AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import (
     AuthenticationFailed,
@@ -10,6 +9,7 @@ from rest_framework_simplejwt.exceptions import (
     TokenError,
 )
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from users.serializers import EmptySerializer
 
 from django.conf import settings
 from django.middleware import csrf
@@ -33,15 +33,37 @@ class CookieJWTAuthentication(JWTAuthentication):
 class UserTokenVerifyView(generics.GenericAPIView):
     authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
-        return Response({"message": "Access token is valid"}, status=status.HTTP_200_OK)
+        if getattr(self, "swagger_fake_view", False):
+            return None  # Skip actual processing during schema generation
+
+        # 쿠키에서 access 토큰 가져오기
+        token = request.COOKIES.get("access_token")
+
+        # 토큰이 없을 경우 400 Bad Request 반환
+        if not token:
+            return Response({"error": "Access token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 토큰 검증
+            AccessToken(token)
+            return Response({"message": "Access token is valid"}, status=status.HTTP_200_OK)
+        except (InvalidToken, TokenError):
+            # 토큰이 유효하지 않을 경우 401 Unauthorized 반환
+            return Response({"error": "Invalid access token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class RefreshAccessTokenView(APIView):
-    permission_classes = [AllowAny]  # 리프레시 토큰으로 인증하므로 권한 검사를 하지 않습니다.
+class RefreshAccessTokenView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
+        if getattr(self, "swagger_fake_view", False):
+            return None  # Skip actual processing during schema generation
+
+        # 쿠키에서 refresh 토큰 가져오기
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
             return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)

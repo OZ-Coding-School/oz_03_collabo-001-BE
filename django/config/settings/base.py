@@ -2,11 +2,10 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from decouple import config
 from dotenv import load_dotenv
 
 from django.utils.translation import gettext
-
-from decouple import config
 
 # django.utils.translation.ugettext = gettext
 
@@ -124,19 +123,19 @@ SITE_ID = 1
 
 # Google allauth 설정
 # Google 설정
-GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
-GOOGLE_SOCIAL_KEY = os.getenv('GOOGLE_SOCIAL_KEY')
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+GOOGLE_SOCIAL_KEY = os.getenv("GOOGLE_SOCIAL_KEY")
 
 # Naver 설정
-NAVER_CLIENT_ID = os.getenv('NAVER_CLIENT_ID')
-NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET')
+NAVER_CLIENT_ID = os.getenv("NAVER_CLIENT_ID")
+NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET")
 
 # Kakao 설정
-KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
-KAKAO_CLIENT_SECRET = os.getenv('KAKAO_CLIENT_SECRET')
-KAKAO_SOCIAL_KEY = os.getenv('KAKAO_SOCIAL_KEY')
+KAKAO_CLIENT_ID = os.getenv("KAKAO_CLIENT_ID")
+KAKAO_CLIENT_SECRET = os.getenv("KAKAO_CLIENT_SECRET")
+KAKAO_SOCIAL_KEY = os.getenv("KAKAO_SOCIAL_KEY")
 
 # Google 소셜 로그인 제공자 설정
 SOCIALACCOUNT_PROVIDERS = {

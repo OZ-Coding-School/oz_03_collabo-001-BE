@@ -1,4 +1,5 @@
 import os
+
 import requests
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -11,6 +12,7 @@ from django.http import JsonResponse
 
 User = get_user_model()
 
+
 # 카카오 소셜 로그인
 class KakaoExchangeCodeForToken(APIView):
     permission_classes = [AllowAny]
@@ -21,7 +23,7 @@ class KakaoExchangeCodeForToken(APIView):
         data = {
             "grant_type": "authorization_code",
             "client_id": os.getenv("KAKAO_CLIENT_ID"),  # Kakao 예제
-            "redirect_uri":os.getenv("KAKAO_REDIRECT_URI"),  # Kakao 예제, 환경 변수 사용
+            "redirect_uri": os.getenv("KAKAO_REDIRECT_URI"),  # Kakao 예제, 환경 변수 사용
             "code": code,
         }
 

@@ -10,6 +10,8 @@ services:
       bash -c "python manage.py makemigrations &&
               python manage.py migrate &&
               python manage.py create_superusers &&
+              python manage.py create_initial_data &&
+              python manage.py create_dumy_data &&
               python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./django:/app  # 로컬의 django 폴더를 컨테이너에 마운트
