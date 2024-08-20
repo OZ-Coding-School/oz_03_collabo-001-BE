@@ -71,7 +71,7 @@ class CommentImageSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    comment_images = CommentImageSerializer(many=True)
+    comment_images = CommentImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Comments
@@ -152,9 +152,13 @@ class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
         fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
 
     def create(self, validated_data):
-        place_id = self.context["place"]
         user = self.context["user"]
+        place_id = self.context["place"]
         place = Place.objects.get(id=place_id)
+
+        # Remove 'user' from validated_data to avoid duplication
+        validated_data.pop("user", None)
+
         comment = Comments.objects.create(place=place, user=user, **validated_data)
         return comment
 

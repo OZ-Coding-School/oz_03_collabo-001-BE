@@ -238,29 +238,55 @@ class AegaPlaceSubcategoryView(APIView):
 
 
 class AegaPlaceCommentsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 조회",
         operation_description="애개플레이스 게시물별 댓글 조회",
         responses={
-            200: openapi.Response("성공"),
+            200: openapi.Response("성공", CommentsSerializer(many=True)),
             400: "잘못된 요청",
         },
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
-        pass
+        comment_id = kwargs.get("comment_pk")
+
+        # 댓글 가져오기
+        comments = Comments.objects.filter(id=comment_id)
+        if not comments.exists():
+            return Response({"detail": "No comments found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CommentsSerializer(comments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 수정",
         operation_description="애개플레이스 게시물별 댓글 수정",
+        request_body=CommentsSerializer,  # 수정할 댓글 데이터를 받는 Serializer
         responses={
-            200: openapi.Response("성공"),
+            200: openapi.Response("성공", CommentsSerializer),
             400: "잘못된 요청",
         },
         tags=["AegaPlace"],
     )
     def put(self, request, *args, **kwargs):
-        pass
+        comment_id = kwargs.get("comment_pk")
+
+        try:
+            comment = Comments.objects.get(id=comment_id)
+        except Comments.DoesNotExist:
+            return Response({"detail": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # 유저 검사
+        if comment.user != request.user:
+            return Response({"detail": "자신의 후기만 수정할 수 있습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = CommentsSerializer(comment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 삭제",
@@ -272,7 +298,19 @@ class AegaPlaceCommentsView(APIView):
         tags=["AegaPlace"],
     )
     def delete(self, request, *args, **kwargs):
-        pass
+        comment_id = kwargs.get("comment_pk")
+
+        try:
+            comment = Comments.objects.get(id=comment_id)
+        except Comments.DoesNotExist:
+            return Response({"detail": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # 유저 검사
+        if comment.user != request.user:
+            return Response({"detail": "자신의 후기만 삭제할 수 있습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        comment.delete()
+        return Response({"detail": "Comment deleted successfully"}, status=status.HTTP_200_OK)
 
 
 class AegaPlaceCommentsAllView(APIView):
@@ -301,7 +339,17 @@ class AegaPlaceCommentsAllView(APIView):
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 등록",
         operation_description="애개플레이스 게시물별 댓글 등록",
-        request_body=PlaceFullDetailCommentsSerializer,  # Specify the serializer directly here
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "content": openapi.Schema(type=openapi.TYPE_STRING, description="댓글 내용"),
+                "rating": openapi.Schema(type=openapi.TYPE_INTEGER, description="평점"),
+                "images": openapi.Schema(
+                    type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING), description="이미지 리스트"
+                ),
+            },
+            required=["content", "rating"],
+        ),
         responses={
             201: openapi.Response("성공"),
             400: "잘못된 요청",
@@ -319,11 +367,10 @@ class AegaPlaceCommentsAllView(APIView):
         # Add the place and user to the data
         data = request.data.copy()
 
-        data["place"] = place_id
-        data["user"] = request.user
+        data["user"] = request.user.id  # 사용자 ID를 명시적으로 사용
 
-        # Use a serializer to validate and save the data
-        serializer = PlaceFullDetailCommentsSerializer(data=data)
+        # Pass the place into the context
+        serializer = PlaceFullDetailCommentsSerializer(data=data, context={"place": place_id, "user": request.user})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -336,13 +383,23 @@ class AegaPlaceCommentImagesView(APIView):
         operation_summary="애개플레이스 개별 게시물의 전체 댓글의 이미지 조회",
         operation_description="애개플레이스 개별 게시물의 전체 댓글의 이미지 조회",
         responses={
-            200: openapi.Response("성공"),
+            200: openapi.Response("성공", CommentImageSerializer(many=True)),
             400: "잘못된 요청",
         },
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
-        pass
+        place_id = kwargs.get("place_pk")
+
+        # 댓글 이미지 가져오기
+        comment_images = CommentImage.objects.filter(comment__place_id=place_id)
+
+        if not comment_images.exists():
+            return Response({"detail": "No comment images found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # 시리얼라이저 사용
+        serializer = CommentImageSerializer(comment_images, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AegaPlaceMainShareView(APIView):
