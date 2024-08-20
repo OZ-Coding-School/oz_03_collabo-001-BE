@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 from django.utils.translation import gettext
 
+from decouple import config
+
 # django.utils.translation.ugettext = gettext
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -121,24 +123,27 @@ ROOT_URLCONF = "config.urls"
 SITE_ID = 1
 
 # Google allauth 설정
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
-# GOOGLE_OAUTH2_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-# GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+# Google 설정
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
+GOOGLE_SOCIAL_KEY = os.getenv('GOOGLE_SOCIAL_KEY')
 
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-}
+# Naver 설정
+NAVER_CLIENT_ID = os.getenv('NAVER_CLIENT_ID')
+NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET')
+
+# Kakao 설정
+KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
+KAKAO_CLIENT_SECRET = os.getenv('KAKAO_CLIENT_SECRET')
+KAKAO_SOCIAL_KEY = os.getenv('KAKAO_SOCIAL_KEY')
 
 # Google 소셜 로그인 제공자 설정
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": GOOGLE_CLIENT_ID,
-            "secret": GOOGLE_CLIENT_SECRET,
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "secret": os.getenv("GOOGLE_CLIENT_SECRET"),
             "key": os.getenv("GOOGLE_SOCIAL_KEY"),
         }
     },
@@ -173,6 +178,11 @@ SIMPLE_JWT = {
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
     "JTI_CLAIM": "jti",
+    "AUTH_COOKIE": "access_token",  # 쿠키에 사용될 키 이름
+    "AUTH_COOKIE_SECURE": True,  # HTTPS에서만 쿠키 전송
+    "AUTH_COOKIE_HTTP_ONLY": True,  # JavaScript에서 쿠키에 접근 불가
+    "AUTH_COOKIE_PATH": "/",  # 쿠키의 경로
+    "AUTH_COOKIE_SAMESITE": "Lax",  # CSRF 방지
 }
 
 # 로그인 후 리디렉션할 URL

@@ -37,15 +37,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=255,
         unique=True,
         verbose_name="닉네임",
-        default=generate_random_nickname(),
+        default=generate_random_nickname,  # 함수 호출 없이 함수 객체를 사용
     )
     profile_image = models.URLField(max_length=200, null=True, blank=True, verbose_name="프로필 이미지")
     is_staff = models.BooleanField(default=False, verbose_name="운영진")
+    is_active = models.BooleanField(default=True, verbose_name="활성화")  # 사용자 활성화 상태 필드 추가
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일자")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정일자")
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"  # 이메일을 사용자 이름으로 사용
+    REQUIRED_FIELDS = []  # 추가 필수 필드가 없음
 
     objects = CustomUserManager()
 

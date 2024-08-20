@@ -22,10 +22,11 @@ class NaverExchangeCodeForToken(APIView):
         code = request.data.get("code")
         state = request.data.get("state")
         token_endpoint = "https://nid.naver.com/oauth2.0/token"
+
         data = {
-            "grant_type": "authorization_code",
-            "client_id": "YOUR_NAVER_CLIENT_ID",
-            "client_secret": "YOUR_NAVER_CLIENT_SECRET",
+            "grant_type": "authorization_code",  # 혹은 필요한 값을 사용
+            "client_id": os.getenv("NAVER_CLIENT_ID"),  # Google 예제
+            "client_secret": os.getenv("NAVER_CLIENT_SECRET"),  # Google 예제
             "code": code,
             "state": state,
         }

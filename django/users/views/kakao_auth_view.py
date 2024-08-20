@@ -1,9 +1,6 @@
 import os
-
 import requests
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import generate_random_nickname
@@ -14,7 +11,6 @@ from django.http import JsonResponse
 
 User = get_user_model()
 
-
 # 카카오 소셜 로그인
 class KakaoExchangeCodeForToken(APIView):
     permission_classes = [AllowAny]
@@ -24,8 +20,8 @@ class KakaoExchangeCodeForToken(APIView):
         token_endpoint = "https://kauth.kakao.com/oauth/token"
         data = {
             "grant_type": "authorization_code",
-            "client_id": "YOUR_KAKAO_CLIENT_ID",
-            "redirect_uri": "YOUR_KAKAO_REDIRECT_URI",
+            "client_id": os.getenv("KAKAO_CLIENT_ID"),  # Kakao 예제
+            "redirect_uri":os.getenv("KAKAO_REDIRECT_URI"),  # Kakao 예제, 환경 변수 사용
             "code": code,
         }
 
@@ -44,16 +40,23 @@ class KakaoExchangeCodeForToken(APIView):
             user_info_response.raise_for_status()
             user_info = user_info_response.json()
 
-            email = user_info.get("kakao_account", {}).get("email")
-            if not email:
-                return JsonResponse({"error": "Email not found in user info"}, status=400)
+            nickname = user_info.get("properties", {}).get("nickname")
+            if not nickname:
+                return JsonResponse({"error": "Nickname not found in user info"}, status=400)
+
+            # 고유한 식별자로 카카오 ID를 사용
+            kakao_id = str(user_info.get("id"))
+            if not kakao_id:
+                return JsonResponse({"error": "Kakao ID not found"}, status=400)
 
             user_data = {
-                "email": email,
+                "email": f"kakao_{kakao_id}@example.com",  # 고유한 이메일 생성
+                "nickname": nickname,
                 "profile_image": user_info.get("properties", {}).get("profile_image"),
-                "nickname": generate_random_nickname(),
             }
-            user, created = User.objects.get_or_create(email=email, defaults=user_data)
+
+            # `email`을 사용자 식별자로 사용하여 사용자 생성 또는 가져오기
+            user, created = User.objects.get_or_create(email=user_data["email"], defaults=user_data)
 
             refresh = RefreshToken.for_user(user)
             response_data = {
@@ -83,13 +86,3 @@ class KakaoExchangeCodeForToken(APIView):
 
         except requests.exceptions.RequestException as e:
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
-
-
-class KakaoSocialLogout(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
-        return response
