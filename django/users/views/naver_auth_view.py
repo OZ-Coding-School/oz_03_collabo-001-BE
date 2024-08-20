@@ -86,7 +86,7 @@ class NaverExchangeCodeForToken(APIView):
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
 
 
-class SocialLogout(APIView):
+class NaverSocialLogout(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

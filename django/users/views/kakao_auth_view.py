@@ -85,7 +85,7 @@ class KakaoExchangeCodeForToken(APIView):
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
 
 
-class SocialLogout(APIView):
+class KakaoSocialLogout(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
