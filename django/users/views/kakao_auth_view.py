@@ -1,4 +1,5 @@
 import os
+
 import requests
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -12,6 +13,7 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 
 User = get_user_model()
+
 
 # 카카오 소셜 로그인
 class KakaoExchangeCodeForToken(APIView):
@@ -81,7 +83,7 @@ class KakaoExchangeCodeForToken(APIView):
 
         except requests.exceptions.RequestException as e:
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
-        
+
 
 class SocialLogout(APIView):
     permission_classes = [IsAuthenticated]
