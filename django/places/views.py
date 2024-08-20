@@ -318,7 +318,7 @@ class AegaPlaceCommentsAllView(APIView):
 
         # Add the place and user to the data
         data = request.data.copy()
-        print(data)
+
         data["place"] = place_id
         data["user"] = request.user
 

@@ -3,14 +3,19 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from users.serializers import EmptySerializer
 
 from django.conf import settings
 
 
 class UserTokenVerifyView(generics.GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
+        if getattr(self, "swagger_fake_view", False):
+            return None  # Skip actual processing during schema generation
+
         # 쿠키에서 access 토큰 가져오기
         token = request.COOKIES.get("access_token")
 
@@ -29,8 +34,12 @@ class UserTokenVerifyView(generics.GenericAPIView):
 
 class RefreshAccessTokenView(generics.GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = EmptySerializer
 
     def post(self, request, *args, **kwargs):
+        if getattr(self, "swagger_fake_view", False):
+            return None  # Skip actual processing during schema generation
+
         # 쿠키에서 refresh 토큰 가져오기
         refresh_token = request.COOKIES.get("refresh_token")
 
