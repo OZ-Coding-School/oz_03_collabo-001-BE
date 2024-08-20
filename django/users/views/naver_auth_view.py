@@ -1,9 +1,12 @@
 import os
 
 import requests
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from users.utils import generate_random_nickname
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -53,8 +56,8 @@ class GoogleExchangeCodeForToken(APIView):
             user_data = {
                 "email": email,
                 "profile_image": user_info.get("picture"),
+                "nickname ": generate_random_nickname(),
             }
-
             # 유저 정보 생성
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
 
@@ -92,15 +95,10 @@ class GoogleExchangeCodeForToken(APIView):
 
 
 class GoogleSocialLogout(APIView):
-    # 로그아웃 - 쿠키에서 토큰을 삭제하는 코드
-    # 고쳐오기
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        response = JsonResponse({"message": "Successfully logged out"})
-
-        # 쿠키에서 'refresh_token'과 'access_token'을 삭제합니다.
+        response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
         response.delete_cookie("refresh_token")
         response.delete_cookie("access_token")
-
         return response
