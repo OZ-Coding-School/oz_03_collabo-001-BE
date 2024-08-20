@@ -74,9 +74,6 @@ class ViewHistory(CommonModel):
     place = models.ForeignKey(
         Place, on_delete=models.CASCADE, related_name="view_histories"
     )  # Foreign Key로 Place 참조
-    bookmark = models.ForeignKey(
-        BookMark, on_delete=models.CASCADE, related_name="view_histories", null=True, blank=True
-    )  # Foreign Key로 Bookmark 참조
 
     def __str__(self):
         return f"{self.user.nickname} - {self.place.name}"
