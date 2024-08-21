@@ -1,0 +1,34 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - develop  # 또는 배포하고 싶은 브랜치 이름
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        port: ${{ secrets.AWS_SSH_PORT }}
+        script: |
+              cd ~/oz_03_collabo_001-BE/django 
+              git fetch origin develop
+              git_status=$(git status --porcelain)
+              if [ -n "$git_status" ]; then
+                git stash
+              fi
+              git pull origin develop
+              sudo docker-compose -f docker-compose-pro.yml up --build -d
+              
+              sudo docker logs dg01 | tail -n 10 > web-logs.txt 
+              sudo docker logs ng01 | tail -n 10 > nginx-logs.txt
