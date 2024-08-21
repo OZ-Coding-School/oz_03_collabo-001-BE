@@ -1,11 +1,9 @@
 from common.models import CommonModel
+from geopy.exc import GeocoderServiceError, GeocoderTimedOut
+from geopy.geocoders import Nominatim
 from users.models import CustomUser
 
 from django.db import models
-
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
-
 
 
 class ServicesIcon(CommonModel):
@@ -70,7 +68,6 @@ class Place(CommonModel):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)  # 메인페이지 선택
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-
 
     def save(self, *args, **kwargs):
         if self.address and (self.latitude is None or self.longitude is None):

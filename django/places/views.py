@@ -2,6 +2,7 @@ from common.models import *
 from common.serializers import *
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from geopy.distance import geodesic
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +14,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import CommentImage, Place, PlaceSubcategory, RecommendedPlace
 from .serializers import *
-from geopy.distance import geodesic
 
 
 class AegaPlaceWholeView(APIView):
@@ -31,12 +31,21 @@ class AegaPlaceWholeView(APIView):
         ),
         manual_parameters=[
             openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
-            openapi.Parameter("place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
+            ),
             openapi.Parameter("page", openapi.IN_QUERY, description="페이지 번호", type=openapi.TYPE_INTEGER),
-            openapi.Parameter("page_size", openapi.IN_QUERY, description="한번에 조회할 수 기본값:10", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "page_size", openapi.IN_QUERY, description="한번에 조회할 수 기본값:10", type=openapi.TYPE_INTEGER
+            ),
             openapi.Parameter("latitude", openapi.IN_QUERY, description="현재 위치의 위도", type=openapi.TYPE_NUMBER),
             openapi.Parameter("longitude", openapi.IN_QUERY, description="현재 위치의 경도", type=openapi.TYPE_NUMBER),
-            openapi.Parameter("is_active", openapi.IN_QUERY, description="거리순 정렬 활성 상태 필터 (True/False)", type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter(
+                "is_active",
+                openapi.IN_QUERY,
+                description="거리순 정렬 활성 상태 필터 (True/False)",
+                type=openapi.TYPE_BOOLEAN,
+            ),
         ],
         responses={
             200: openapi.Response(
@@ -123,7 +132,6 @@ class AegaPlaceWholeView(APIView):
         }
 
         return paginator.get_paginated_response(response_data)
-
 
 
 class AegaPlaceMainView(APIView):
