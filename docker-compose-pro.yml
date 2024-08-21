@@ -23,11 +23,10 @@ services:
     image: nginx:1.17.10
     container_name: ng01
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/usr/share/nginx/html/static/
       - media_volume:/usr/share/nginx/html/media/
       - /var/www/html:/var/www/html
