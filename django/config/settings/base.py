@@ -38,8 +38,8 @@ if not os.path.exists(env_path):
 # .env 파일을 로드
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
-# 서비스 배포시 수정해야함.
-SECRET_KEY = "django-insecure-g2$d_7hc#kw_^2%6sk4va_&xg1gsd#s8mgwwbi)r7+fkli4c^m"
+# 서비스 배포시 수정해야함.(물어보기)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # 서비스 배포시 False
 DEBUG = True
@@ -82,6 +82,14 @@ CUSTOM_INSTALLED_APPS = [
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
 
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+ROOT_URLCONF = "config.urls"
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -94,31 +102,6 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
-# 서비스 배포시 코드 수정해야함
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
-
-# 모든 출처를 허용하려면 (개발 환경에서만 사용하는 것이 좋습니다)
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True  # 쿠키 및 인증 헤더를 허용합니다.
-
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
-
-# SESSION_COOKIE_DOMAIN = 'localhost:5173/'
-# SESSION_COOKIE_PATH = '/'
-
-AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
-
-ROOT_URLCONF = "config.urls"
-
-SITE_ID = 1
 
 # Google allauth 설정
 # Google 설정
@@ -212,28 +195,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
-
-# 마이그레이션 오류로 sqllite로 진행함
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("DB_NAME"),
-#         "USER": os.getenv("DB_USER"),
-#         "PASSWORD": os.getenv("DB_PASSWORD"),
-#         "HOST": os.getenv("DB_HOST"),
-#         "PORT": os.getenv("DB_PORT"),
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -1,13 +1,33 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
+import platform
 import sys
 
 
 def main():
     """Run administrative tasks."""
 
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
+    # 운영 체제 확인
+    current_os = platform.system()
+    current_distribution = ""
+
+    if current_os == "Linux":
+        # 배포판 이름 확인
+        if os.path.isfile("/etc/os-release"):
+            with open("/etc/os-release") as f:
+                for line in f:
+                    if line.startswith("NAME="):
+                        current_distribution = line.strip().split("=")[1].strip('"')
+                        break
+
+        # Amazon Linux 여부 확인
+        if "Amazon" in current_distribution:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.product")
+        else:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
+    else:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
 
     try:
         from django.core.management import execute_from_command_line
