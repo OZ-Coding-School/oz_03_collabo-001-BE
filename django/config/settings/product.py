@@ -1,10 +1,8 @@
 from .base import *
 
-
-
 DEBUG = False
 
-#로드 밸런스 사용시 ip 더 추가
+# 로드 밸런스 사용시 ip 더 추가
 ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr"]
 
 CORS_ALLOWED_ORIGINS = [
@@ -13,8 +11,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://api.dogandbaby.co.kr",
     "http://api.dogandbaby.co.kr",
     "http://dogandbaby.co.kr",
-
-
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
@@ -23,7 +19,7 @@ SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = True      # HTTPS에서만 CSRF 쿠키 전송
+CSRF_COOKIE_SECURE = True  # HTTPS에서만 CSRF 쿠키 전송
 SECURE_SSL_REDIRECT = True
 
 DATABASES = {
