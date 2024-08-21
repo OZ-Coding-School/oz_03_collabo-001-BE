@@ -20,7 +20,7 @@ def main():
                     if line.startswith("NAME="):
                         current_distribution = line.strip().split("=")[1].strip('"')
                         break
-        
+
         # Amazon Linux 여부 확인
         if "Amazon" in current_distribution:
             os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.product")
