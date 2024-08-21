@@ -7,4 +7,3 @@ class PlacesConfig(AppConfig):
 
     def ready(self):
         import places.signals
-
