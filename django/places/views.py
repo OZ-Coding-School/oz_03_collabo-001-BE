@@ -11,7 +11,7 @@ from users.models import CustomUser, ViewHistory
 
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import CommentImage, Place, RecommendedPlace, PlaceSubcategory
+from .models import CommentImage, Place, PlaceSubcategory, RecommendedPlace
 from .serializers import *
 
 

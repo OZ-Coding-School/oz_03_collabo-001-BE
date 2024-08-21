@@ -3,6 +3,7 @@ from places.models import CommentImage, Comments
 from rest_framework import serializers
 from users.models import BookMark, CustomUser, ViewHistory
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

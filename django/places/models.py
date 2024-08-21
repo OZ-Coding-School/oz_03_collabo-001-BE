@@ -46,9 +46,15 @@ class Place(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     store_image = models.ImageField(upload_to="place_image/")  # 대표이미지 아이콘
     service_icons = models.ManyToManyField(ServicesIcon, related_name="places")  # ManyToManyField로 변경
-    place_region = models.ForeignKey(PlaceRegion, on_delete=models.CASCADE, related_name="place_region")  # [서울], [경기] ....
-    place_subcategory = models.ForeignKey(PlaceSubcategory, on_delete=models.CASCADE, related_name="place_subcategory")  # 카페, 펜션, 음식점 ...
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places_user")  # Foreign Key로 User 참조
+    place_region = models.ForeignKey(
+        PlaceRegion, on_delete=models.CASCADE, related_name="place_region"
+    )  # [서울], [경기] ....
+    place_subcategory = models.ForeignKey(
+        PlaceSubcategory, on_delete=models.CASCADE, related_name="place_subcategory"
+    )  # 카페, 펜션, 음식점 ...
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="places_user"
+    )  # Foreign Key로 User 참조
     name = models.CharField(max_length=255, null=False)  # 장소 이름, Not Null
     description_tags = models.TextField()  # 장소 설명
     address = models.CharField(max_length=255, null=False)  # 주소, Not Null
