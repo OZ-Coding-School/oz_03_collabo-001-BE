@@ -15,13 +15,6 @@ services:
       - ./django:/app
       - static_volume:/app/static
       - ./staticfiles:/app/staticfiles
-    # environment:
-    #   - DB_HOST=${RDS_HOSTNAME} 
-    #   - DB_NAME=${RDS_DB_NAME}
-    #   - DB_USER=${RDS_USERNAME}
-    #   - DB_PASSWORD=${RDS_PASSWORD}
-    # env_file:
-    #   - .env
     ports:
       - "8000:8000"
     networks:
