@@ -10,16 +10,24 @@ def main():
 
     # 운영 체제 확인
     current_os = platform.system()
+    current_distribution = ""
 
-    if current_os == "Darwin":  # macOS
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
-    elif current_os == "Linux":
-        # Amazon Linux를 더 정확하게 확인하려면 추가 검사가 필요할 수 있습니다.
-        # 여기서는 Linux를 Amazon Linux로 가정합니다.
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.product")
+    if current_os == "Linux":
+        # 배포판 이름 확인
+        if os.path.isfile("/etc/os-release"):
+            with open("/etc/os-release") as f:
+                for line in f:
+                    if line.startswith("NAME="):
+                        current_distribution = line.strip().split("=")[1].strip('"')
+                        break
+        
+        # Amazon Linux 여부 확인
+        if "Amazon" in current_distribution:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.product")
+        else:
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
     else:
-        # 기본값 설정 (다른 OS의 경우)
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.product")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development_sqlite")
 
     try:
         from django.core.management import execute_from_command_line
