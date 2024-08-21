@@ -152,34 +152,6 @@ class AegaPlaceMainView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class AegaPlaceBannerView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 배너 조회",
-        operation_description="애개플레이스 배너 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceRecommendationView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 추천장소 조회",
-        operation_description="애개플레이스 추천장소 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
 class AegaPlaceView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -207,35 +179,6 @@ class AegaPlaceView(APIView):
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AegaPlaceRegionView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 상세페이지 지역별 조회",
-        operation_description="애개플레이스 상세페이지 지역별 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceSubcategoryView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 상세페이지 장소별 조회",
-        operation_description="애개플레이스 상세페이지 장소별 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
 
 class AegaPlaceCommentsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -400,20 +343,6 @@ class AegaPlaceCommentImagesView(APIView):
         # 시리얼라이저 사용
         serializer = CommentImageSerializer(comment_images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AegaPlaceMainShareView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 정보 공유 링크",
-        operation_description="조회중인 플레이스 url 링크 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
 
 
 class AegaPlaceMainBookmarkView(APIView):

@@ -22,7 +22,7 @@ from ..serializers import (
 class MyProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema()
+    @swagger_auto_schema(tags=["MyPage"],)
     def get(self, request):
         user = request.user
         profile_serializer = UserProfileSerializer(user)
@@ -119,6 +119,7 @@ class UpdateProfileNameView(APIView):
             ),
             400: "Bad request",
         },
+        tags=["MyPage"],
     )
     def post(self, request):
         user = request.user
@@ -136,7 +137,7 @@ class UpdateProfileNameView(APIView):
 class MyBookmarksView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(operation_description="Get All Bookmarks")
+    @swagger_auto_schema(operation_description="Get All Bookmarks", tags=["MyPage"],)
     def get(self, request):
         user = request.user
         bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")
@@ -148,7 +149,7 @@ class MyBookmarksView(APIView):
 class ViewHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(operation_description="Get All ViewHistory")
+    @swagger_auto_schema(operation_description="Get All ViewHistory", tags=["MyPage"],)
     def get(self, request):
         user = request.user
         viewHistory = ViewHistory.objects.filter(user=user).order_by("-created_at")
@@ -160,7 +161,7 @@ class ViewHistoryView(APIView):
 class MycommentView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(operation_description="Get All MyComment")
+    @swagger_auto_schema(operation_description="Get All MyComment", tags=["MyPage"],)
     def get(self, request):
         user = request.user
         mycomment = Comments.objects.filter(user=user).order_by("-created_at")
