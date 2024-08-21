@@ -13,8 +13,14 @@ from .models import (
     RecommendedPlace,
     RecommendTags,
     ServicesIcon,
+    PlaceSubcategory
 )
 
+
+class PlaceSubcategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceSubcategory
+        fields = ["id", "subcategory"]
 
 class MainPagePlaceSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
@@ -93,7 +99,7 @@ class RecommendTagsSerializer(serializers.ModelSerializer):
 class PlaceRegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceRegion
-        fields = ["region"]
+        fields = ["id", "region"]
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -155,7 +161,7 @@ class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
         user = self.context["user"]
         place_id = self.context["place"]
         place = Place.objects.get(id=place_id)
-
+        
         # Remove 'user' from validated_data to avoid duplication
         validated_data.pop("user", None)
 

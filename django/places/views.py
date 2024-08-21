@@ -11,7 +11,7 @@ from users.models import CustomUser, ViewHistory
 
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import CommentImage, Place, RecommendedPlace
+from .models import CommentImage, Place, RecommendedPlace, PlaceSubcategory
 from .serializers import *
 
 
@@ -90,8 +90,22 @@ class AegaPlaceWholeView(APIView):
         paginator.page_size = page_size
         result_page = paginator.paginate_queryset(queryset, request)
 
-        serializer = MainPagePlaceSerializer(result_page, many=True, context={"request": request})
-        return paginator.get_paginated_response(serializer.data)
+        place_serializer = MainPagePlaceSerializer(result_page, many=True, context={"request": request})
+
+        # PlaceSubcategory와 PlaceRegion의 전체 데이터 가져오기
+        place_subcategories = PlaceSubcategory.objects.all()
+        place_regions = PlaceRegion.objects.all()
+
+        subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
+        region_serializer = PlaceRegionSerializer(place_regions, many=True)
+
+        response_data = {
+            "place_subcategories": subcategory_serializer.data,
+            "place_regions": region_serializer.data,
+            "results": place_serializer.data,
+        }
+
+        return paginator.get_paginated_response(response_data)
 
 
 class AegaPlaceMainView(APIView):
@@ -179,6 +193,7 @@ class AegaPlaceView(APIView):
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class AegaPlaceCommentsView(APIView):
     permission_classes = [IsAuthenticated]
