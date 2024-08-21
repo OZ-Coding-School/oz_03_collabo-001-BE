@@ -91,6 +91,18 @@ ROOT_URLCONF = "config.urls"
 
 SITE_ID = 1
 
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware", csrf꺼두고 테스트 진행중
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+]
+
 # Google allauth 설정
 # Google 설정
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
