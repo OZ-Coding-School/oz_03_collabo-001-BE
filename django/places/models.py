@@ -1,4 +1,6 @@
 from common.models import CommonModel
+from geopy.exc import GeocoderServiceError, GeocoderTimedOut
+from geopy.geocoders import Nominatim
 from users.models import CustomUser
 
 from django.db import models
@@ -46,17 +48,41 @@ class Place(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     store_image = models.ImageField(upload_to="place_image/")  # 대표이미지 아이콘
     service_icons = models.ManyToManyField(ServicesIcon, related_name="places")  # ManyToManyField로 변경
-    place_region = models.ManyToManyField(PlaceRegion, related_name="places")  # [서울], [경기] ....
-    place_subcategory = models.ManyToManyField(PlaceSubcategory, related_name="places")  # 카페, 펜션, 음식점 ...
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="places")  # Foreign Key로 User 참조
+    place_region = models.ForeignKey(
+        PlaceRegion, on_delete=models.CASCADE, related_name="place_region"
+    )  # [서울], [경기] ....
+    place_subcategory = models.ForeignKey(
+        PlaceSubcategory, on_delete=models.CASCADE, related_name="place_subcategory"
+    )  # 카페, 펜션, 음식점 ...
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="places_user"
+    )  # Foreign Key로 User 참조
     name = models.CharField(max_length=255, null=False)  # 장소 이름, Not Null
     description_tags = models.TextField()  # 장소 설명
     address = models.CharField(max_length=255, null=False)  # 주소, Not Null
     price_text = models.TextField(blank=True, null=True)  # 가격 텍스트, 필수 아님
     price_link = models.URLField(blank=True, null=True)  # 가격 링크, 필수 아님
     rating = models.IntegerField(choices=RATING_CHOICES, blank=True, null=True)
+    rating_float = models.FloatField(null=True, blank=True)
     instruction = models.TextField(blank=True, null=True)  # 상세내용 텍스트
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)  # 메인페이지 선택
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.address and (self.latitude is None or self.longitude is None):
+            geolocator = Nominatim(user_agent="dogbaby_geocoding_app_v1")
+            try:
+                location = geolocator.geocode(self.address, timeout=10)
+                if location:
+                    self.latitude = location.latitude
+                    self.longitude = location.longitude
+                else:
+                    print("주소를 찾을 수 없습니다.")
+            except (GeocoderTimedOut, GeocoderServiceError) as e:
+                print(f"지오코딩 오류: {e}")
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

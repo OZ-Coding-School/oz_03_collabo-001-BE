@@ -9,11 +9,18 @@ from .models import (
     PlaceDescriptionImage,
     PlaceImage,
     PlaceRegion,
+    PlaceSubcategory,
     RecommendCategory,
     RecommendedPlace,
     RecommendTags,
     ServicesIcon,
 )
+
+
+class PlaceSubcategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceSubcategory
+        fields = ["id", "subcategory"]
 
 
 class MainPagePlaceSerializer(serializers.ModelSerializer):
@@ -93,7 +100,7 @@ class RecommendTagsSerializer(serializers.ModelSerializer):
 class PlaceRegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceRegion
-        fields = ["region"]
+        fields = ["id", "region"]
 
 
 class PlaceSerializer(serializers.ModelSerializer):

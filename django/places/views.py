@@ -2,6 +2,7 @@ from common.models import *
 from common.serializers import *
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from geopy.distance import geodesic
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -11,7 +12,7 @@ from users.models import CustomUser, ViewHistory
 
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import CommentImage, Place, RecommendedPlace
+from .models import CommentImage, Place, PlaceSubcategory, RecommendedPlace
 from .serializers import *
 
 
@@ -22,23 +23,34 @@ class AegaPlaceWholeView(APIView):
         operation_summary="애개플레이스 전체 게시글 조회",
         operation_description=(
             "애개플레이스 전체 게시글을 조회합니다. \n"
-            "place_region, place_subcategory에 따라 필터링할 수 있으며, 정렬할 수 있습니다. \n"
+            "place_region, place_subcategory에 따라 필터링할 수 있으며, 거리순으로 정렬할 수 있습니다. \n"
             "예시: place_region=1, place_subcategory=2, ordering=-created_at \n"
             "예시 URL: http://127.0.0.1:8000/places/?place_region=1&place_subcategory=2&ordering=-created_at \n"
+            "또는 위도와 경도에 따라 장소를 거리순으로 정렬할 수 있습니다. \n"
+            "예시: http://127.0.0.1:8000/places/?latitude=37.5665&longitude=126.9780"
         ),
         manual_parameters=[
             openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
             openapi.Parameter(
                 "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
             ),
+            openapi.Parameter("page", openapi.IN_QUERY, description="페이지 번호", type=openapi.TYPE_INTEGER),
             openapi.Parameter(
-                "ordering", openapi.IN_QUERY, description="정렬 (예: -created_at, rating 등)", type=openapi.TYPE_STRING
+                "page_size", openapi.IN_QUERY, description="한번에 조회할 수 기본값:10", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter("latitude", openapi.IN_QUERY, description="현재 위치의 위도", type=openapi.TYPE_NUMBER),
+            openapi.Parameter("longitude", openapi.IN_QUERY, description="현재 위치의 경도", type=openapi.TYPE_NUMBER),
+            openapi.Parameter(
+                "is_active",
+                openapi.IN_QUERY,
+                description="거리순 정렬 활성 상태 필터 (True/False)",
+                type=openapi.TYPE_BOOLEAN,
             ),
         ],
         responses={
             200: openapi.Response(
                 "성공",
-                PlaceSerializer(many=True),
+                MainPagePlaceSerializer(many=True),
                 examples={
                     "application/json": [
                         {
@@ -71,9 +83,10 @@ class AegaPlaceWholeView(APIView):
         place_region_id = request.GET.get("place_region")
         place_subcategory_id = request.GET.get("place_subcategory")
         ordering = request.GET.get("ordering", "-created_at")
-
-        page = request.GET.get("page", 1)  # 기본 페이지 번호 및 페이지 크기 설정
-        page_size = request.GET.get("page_size", 10)  # 기본 페이지 크기를 10으로 설정
+        latitude = request.GET.get("latitude")
+        longitude = request.GET.get("longitude")
+        page = request.GET.get("page", 1)
+        page_size = request.GET.get("page_size", 10)
 
         queryset = Place.objects.all()
 
@@ -83,15 +96,42 @@ class AegaPlaceWholeView(APIView):
         if place_subcategory_id:
             queryset = queryset.filter(place_subcategory__id=place_subcategory_id)
 
-        queryset = queryset.order_by(ordering)
+        if latitude and longitude:
+            try:
+                user_location = (float(latitude), float(longitude))
+                places_with_distance = []
+                for place in queryset:
+                    place_location = (place.latitude, place.longitude)
+                    distance = geodesic(place_location, user_location).meters
+                    places_with_distance.append((place, distance))
 
-        # 페이지네이션 적용
+                # 거리순으로 정렬
+                places_with_distance.sort(key=lambda x: x[1])
+                queryset = [place for place, distance in places_with_distance]
+            except ValueError:
+                return Response({"error": "Invalid latitude or longitude format"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            queryset = queryset.order_by(ordering)
+
         paginator = PageNumberPagination()
         paginator.page_size = page_size
         result_page = paginator.paginate_queryset(queryset, request)
 
-        serializer = MainPagePlaceSerializer(result_page, many=True, context={"request": request})
-        return paginator.get_paginated_response(serializer.data)
+        place_serializer = MainPagePlaceSerializer(result_page, many=True, context={"request": request})
+
+        place_subcategories = PlaceSubcategory.objects.all()
+        place_regions = PlaceRegion.objects.all()
+
+        subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
+        region_serializer = PlaceRegionSerializer(place_regions, many=True)
+
+        response_data = {
+            "place_subcategories": subcategory_serializer.data,
+            "place_regions": region_serializer.data,
+            "results": place_serializer.data,
+        }
+
+        return paginator.get_paginated_response(response_data)
 
 
 class AegaPlaceMainView(APIView):
@@ -152,34 +192,6 @@ class AegaPlaceMainView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class AegaPlaceBannerView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 배너 조회",
-        operation_description="애개플레이스 배너 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceRecommendationView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 추천장소 조회",
-        operation_description="애개플레이스 추천장소 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
 class AegaPlaceView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -207,34 +219,6 @@ class AegaPlaceView(APIView):
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AegaPlaceRegionView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 상세페이지 지역별 조회",
-        operation_description="애개플레이스 상세페이지 지역별 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
-
-
-class AegaPlaceSubcategoryView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 상세페이지 장소별 조회",
-        operation_description="애개플레이스 상세페이지 장소별 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
 
 
 class AegaPlaceCommentsView(APIView):
@@ -400,20 +384,6 @@ class AegaPlaceCommentImagesView(APIView):
         # 시리얼라이저 사용
         serializer = CommentImageSerializer(comment_images, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AegaPlaceMainShareView(APIView):
-    @swagger_auto_schema(
-        operation_summary="애개플레이스 정보 공유 링크",
-        operation_description="조회중인 플레이스 url 링크 조회",
-        responses={
-            200: openapi.Response("성공"),
-            400: "잘못된 요청",
-        },
-        tags=["AegaPlace"],
-    )
-    def get(self, request, *args, **kwargs):
-        pass
 
 
 class AegaPlaceMainBookmarkView(APIView):
