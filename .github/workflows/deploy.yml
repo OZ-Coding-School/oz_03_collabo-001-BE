@@ -29,6 +29,4 @@ jobs:
               fi
               git pull origin develop
               sudo docker-compose -f docker-compose-pro.yml up --build -d
-              
-              sudo docker logs dg01 | tail -n 10 > web-logs.txt 
-              sudo docker logs ng01 | tail -n 10 > nginx-logs.txt
+#깃을 직접하는 방법도 있지만, 도커로 하는방법도 있따. 알아볼것. 
