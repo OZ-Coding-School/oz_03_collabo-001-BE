@@ -3,16 +3,30 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - develop  # 또는 배포하고 싶은 브랜치 이름
+      - develop
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
+# Dockerhub usernamem, token
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+# docker 사용자명과 레포지토리 이름
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: youngkwangjoo/oz_03_collabo-001-BE:latest
+# 서버배포 스크립트
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -21,12 +35,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: ${{ secrets.AWS_SSH_PORT }}
         script: |
-              cd ~/oz_03_collabo_001-BE/django 
-              git fetch origin develop
-              git_status=$(git status --porcelain)
-              if [ -n "$git_status" ]; then
-                git stash
-              fi
-              git pull origin develop
-              sudo docker-compose -f docker-compose-pro.yml up --build -d
-#깃을 직접하는 방법도 있지만, 도커로 하는방법도 있따. 알아볼것. 
+          cd oz_03_collabo-001-BE
+          docker pull youngkwangjoo/oz_03_collabo-001-BE:latest
+          docker-compose -f docker-compose-pro.yml up -d
