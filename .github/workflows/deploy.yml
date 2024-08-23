@@ -35,6 +35,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: ${{ secrets.AWS_SSH_PORT }}
         script: |
-          cd oz_03_collabo-001-BE
-          docker pull youngkwangjoo/oz_03_collabo_001_be:latest
-          docker-compose -f docker-compose-pro.yml up -d
+          cd /home/ec2-user/oz_03_collabo-001-BE 
+          sudo docker pull youngkwangjoo/oz_03_collabo_001_be:latest
+          sudo docker-compose -f docker-compose-pro.yml up -d
