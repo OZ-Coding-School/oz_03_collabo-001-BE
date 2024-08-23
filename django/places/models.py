@@ -25,7 +25,7 @@ class PlaceRegion(CommonModel):
 
 class PlaceSubcategory(CommonModel):
     id = models.BigAutoField(primary_key=True)  # Primary Key, Unique Identifier
-    subcategory = models.CharField(max_length=255, null=False)  # 카페,펜션,음식점... Not Null
+    subcategory = models.CharField(max_length=255, null=False)  # 카페,펜션,음식점.. Not Null
 
     def __str__(self):
         return self.subcategory
