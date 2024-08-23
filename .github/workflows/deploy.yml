@@ -12,21 +12,21 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-# Dockerhub usernamem, token
+
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-# docker 사용자명과 레포지토리 이름
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: youngkwangjoo/oz_03_collabo-001-BE:latest
-# 서버배포 스크립트
+        tags: youngkwangjoo/oz_03_collabo_001_be:latest
+
     - name: Deploy to server
       uses: appleboy/ssh-action@master
       with:
@@ -36,5 +36,5 @@ jobs:
         port: ${{ secrets.AWS_SSH_PORT }}
         script: |
           cd oz_03_collabo-001-BE
-          docker pull youngkwangjoo/oz_03_collabo-001-BE:latest
+          docker pull youngkwangjoo/oz_03_collabo_001_be:latest
           docker-compose -f docker-compose-pro.yml up -d
