@@ -29,7 +29,7 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings.product
 
   nginx:
-    image: nginx:1.17.10
+    image: nginx:alpine
     container_name: ng01
     ports:
       - "80:80"
