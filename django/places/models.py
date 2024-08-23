@@ -49,10 +49,10 @@ class Place(CommonModel):
     store_image = models.ImageField(upload_to="place_image/")  # 대표이미지 아이콘
     service_icons = models.ManyToManyField(ServicesIcon, related_name="places")  # ManyToManyField로 변경
     place_region = models.ForeignKey(
-        PlaceRegion, on_delete=models.CASCADE, related_name="place_region"
+        PlaceRegion, on_delete=models.CASCADE, related_name="place_region", blank=True, null=True
     )  # [서울], [경기] ....
     place_subcategory = models.ForeignKey(
-        PlaceSubcategory, on_delete=models.CASCADE, related_name="place_subcategory"
+        PlaceSubcategory, on_delete=models.CASCADE, related_name="place_subcategory", blank=True, null=True
     )  # 카페, 펜션, 음식점 ...
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="places_user"
