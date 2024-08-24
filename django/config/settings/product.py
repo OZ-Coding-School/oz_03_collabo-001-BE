@@ -3,7 +3,7 @@ from .base import *
 DEBUG = False
 
 # 로드 밸런스 사용시 ip 더 추가
-ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "13.125.130.26", "example.com"]
+ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "13.125.130.26", "example.com", "web"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://www.dogandbaby.co.kr",
