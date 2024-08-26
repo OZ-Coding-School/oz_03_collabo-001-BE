@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from geopy.distance import geodesic
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import CustomUser, ViewHistory
@@ -17,7 +17,7 @@ from .serializers import *
 
 
 class AegaPlaceWholeView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 전체 게시글 조회",
@@ -193,7 +193,7 @@ class AegaPlaceMainView(APIView):
 
 
 class AegaPlaceView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 상세페이지 개별 조회",
@@ -214,15 +214,17 @@ class AegaPlaceView(APIView):
         except Place.DoesNotExist:
             return Response({"detail": "Place not found"}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = CustomUser.objects.get(id=request.user.id)
-        ViewHistory.objects.create(user=user, place=place)
+        user = request.user
+        if user.is_authenticated:
+            user = CustomUser.objects.get(id=request.user.id)
+            ViewHistory.objects.create(user=user, place=place)
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AegaPlaceCommentsView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 조회",
