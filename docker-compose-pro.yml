@@ -39,6 +39,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /etc/letsencrypt/live/api.dogandbaby.co.kr/fullchain.pem:/etc/letsencrypt/live/api.dogandbaby.co.kr/fullchain.pem
       - ./data/certbot/www:/var/www/certbot
+      - static_volume:/app/static
     depends_on:
       - web
     networks:
