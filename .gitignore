@@ -8,7 +8,7 @@
 # But don't ignore the __init__.py file
 !**/migrations/__init__.py
 
-
+static/
 ### Django ###
 *.log
 *.pot
