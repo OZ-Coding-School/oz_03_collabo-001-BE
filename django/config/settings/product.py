@@ -3,20 +3,25 @@ from .base import *
 DEBUG = False
 
 # 로드 밸런스 사용시 ip 더 추가
-ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "13.125.130.26", "example.com"]
+ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "dogandbaby.co.kr", "13.125.130.26"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://api.dogandbaby.co.kr",
     "https://api.dogandbaby.co.kr",
     "http://www.dogandbaby.co.kr",
     "https://www.dogandbaby.co.kr",
+    "https://dogandbaby.co.kr",  # 이 줄을 추가
 ]
 
-CSRF_TRUSTED_ORIGINS = ["https://api.dogandbaby.co.kr"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.dogandbaby.co.kr",
+    "https://www.dogandbaby.co.kr",
+    "https://dogandbaby.co.kr",
+]
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True  # 쿠키 및 인증 헤더를 허용합니다.
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
@@ -36,9 +41,9 @@ DATABASES = {
 }
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
