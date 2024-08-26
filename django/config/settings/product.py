@@ -8,6 +8,8 @@ ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "13.125.130.26"
 CORS_ALLOWED_ORIGINS = [
     "http://api.dogandbaby.co.kr",
     "https://api.dogandbaby.co.kr",
+    "http://www.dogandbaby.co.kr",
+    "https://www.dogandbaby.co.kr",
 ]
 
 CSRF_TRUSTED_ORIGINS = ["https://api.dogandbaby.co.kr"]
