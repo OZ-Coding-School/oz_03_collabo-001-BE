@@ -33,11 +33,13 @@ class MainPagePlaceSerializer(serializers.ModelSerializer):
 
     def get_comments_count(self, obj):
         user = self.context["request"].user
-        return Comments.objects.filter(user=user, place=obj).count()
+        return Comments.objects.filter(place=obj).count()
 
     def get_is_bookmarked(self, obj):
         user = self.context["request"].user
-        return BookMark.objects.filter(user=user, place=obj).exists()
+        if user.is_authenticated:
+            return BookMark.objects.filter(user=user, place=obj).exists()
+        return False  # 로그인하지 않았을 때는 북마크 상태를 false로 반환
 
 
 class MainPageBannerSerializer(serializers.ModelSerializer):
@@ -219,4 +221,6 @@ class AegaPlaceDetailSerializer(serializers.ModelSerializer):
 
     def get_bookmark(self, obj):
         user = self.context["request"].user
-        return BookMark.objects.filter(user=user, place=obj).exists()
+        if user.is_authenticated:
+            return BookMark.objects.filter(user=user, place=obj).exists()
+        return False  # 로그인하지 않았을 때는 북마크 상태를 false로 반환

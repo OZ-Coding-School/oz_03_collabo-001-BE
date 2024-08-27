@@ -14,6 +14,7 @@ services:
     volumes:
       - ./django:/app
       - static_volume:/app/static
+      - media_volume:/app/media
       - ./staticfiles:/app/staticfiles
     ports:
       - "8000:8000"
@@ -39,6 +40,8 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /etc/letsencrypt/live/api.dogandbaby.co.kr/fullchain.pem:/etc/letsencrypt/live/api.dogandbaby.co.kr/fullchain.pem
       - ./data/certbot/www:/var/www/certbot
+      - static_volume:/app/static
+      - media_volume:/app/media
     depends_on:
       - web
     networks:
