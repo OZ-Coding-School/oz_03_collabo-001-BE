@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = True
+DEBUG = False
 
 # 로드 밸런스 사용시 ip 더 추가
 
@@ -19,7 +19,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://dogandbaby.co.kr",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True  # 쿠키 및 인증 헤더를 허용합니다.
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
