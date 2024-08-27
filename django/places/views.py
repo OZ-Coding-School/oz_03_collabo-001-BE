@@ -135,7 +135,7 @@ class AegaPlaceWholeView(APIView):
 
 
 class AegaPlaceMainView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 or 펫존 or 키즈존 조회",
@@ -181,11 +181,19 @@ class AegaPlaceMainView(APIView):
 
         new_places_serializer = MainPagePlaceSerializer(new_places_obj, many=True, context={"request": request})
 
+        place_subcategories = PlaceSubcategory.objects.all()
+        place_regions = PlaceRegion.objects.all()
+
+        subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
+        region_serializer = PlaceRegionSerializer(place_regions, many=True)
+
         data = {
             "banners": banner_serializer.data,
             "recommandedplaces": recommandedplace_serializer.data,
             "new_places": new_places_serializer.data,
+            "place_subcategories": subcategory_serializer.data,
             "region_places": new_places_serializer.data,
+            "place_regions": region_serializer.data,
             "subcategory": new_places_serializer.data,
         }
 
