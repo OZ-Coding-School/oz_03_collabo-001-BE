@@ -30,6 +30,12 @@ class AegaPlaceWholeView(APIView):
             "예시: http://127.0.0.1:8000/places/?latitude=37.5665&longitude=126.9780"
         ),
         manual_parameters=[
+            openapi.Parameter(
+                "main_category",
+                openapi.IN_QUERY,
+                description="펫존, 키즈존 구분 없으면, 전부조회 / pet or kids or 공백",
+                type=openapi.TYPE_STRING,
+            ),
             openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
             openapi.Parameter(
                 "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
@@ -80,6 +86,16 @@ class AegaPlaceWholeView(APIView):
         tags=["AegaPlace"],
     )
     def get(self, request, *args, **kwargs):
+
+        main_category = request.GET.get("main_category")
+
+        if main_category == "":
+            main_category = "애개플레이스"
+        elif main_category == "pet":
+            main_category = "펫존"
+        elif main_category == "kids":
+            main_category = "키즈존"
+
         place_region_id = request.GET.get("place_region")
         place_subcategory_id = request.GET.get("place_subcategory")
         ordering = request.GET.get("ordering", "-created_at")
@@ -88,7 +104,14 @@ class AegaPlaceWholeView(APIView):
         page = request.GET.get("page", 1)
         page_size = request.GET.get("page_size", 10)
 
-        queryset = Place.objects.all()
+        if main_category == "애개플레이스":
+            queryset = Place.objects.all()
+        elif main_category == "펫존":
+            queryset = Place.objects.filter(category="pet_zone")
+        elif main_category == "키즈존":
+            queryset = Place.objects.filter(category="kid_zone")
+        else:
+            queryset = Place.objects.all()
 
         if place_region_id:
             queryset = queryset.filter(place_region__id=place_region_id)
