@@ -1,10 +1,17 @@
 from common.models import Banner
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from places.models import Comments, Place
-from places.serializers import MainPagePlaceSerializer
+from geopy.distance import geodesic
+from places.models import Comments, Place, PlaceRegion
+from places.serializers import (
+    MainPagePlaceSerializer,
+    PlaceRegionSerializer,
+    PlaceSubcategory,
+    PlaceSubcategorySerializer,
+)
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -143,15 +150,120 @@ class MyBookmarksView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Get All Bookmarks",
+        operation_summary="사용자가 북마크한 전체 게시글 조회",
+        operation_description=(
+            "사용자가 북마크한 전체 게시글을 조회합니다. \n"
+            "place_region, place_subcategory에 따라 필터링할 수 있으며, 거리순으로 정렬할 수 있습니다. \n"
+            "예시: place_region=1, place_subcategory=2, ordering=-created_at \n"
+            "예시 URL: http://127.0.0.1:8000/places/?place_region=1&place_subcategory=2&ordering=-created_at \n"
+            "또는 위도와 경도에 따라 장소를 거리순으로 정렬할 수 있습니다. \n"
+            "예시: http://127.0.0.1:8000/places/?latitude=37.5665&longitude=126.9780"
+        ),
+        manual_parameters=[
+            openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "place_subcategory", openapi.IN_QUERY, description="장소 카테고리 필터링", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter("page", openapi.IN_QUERY, description="페이지 번호", type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                "page_size", openapi.IN_QUERY, description="한번에 조회할 수 기본값:10", type=openapi.TYPE_INTEGER
+            ),
+            openapi.Parameter("latitude", openapi.IN_QUERY, description="현재 위치의 위도", type=openapi.TYPE_NUMBER),
+            openapi.Parameter("longitude", openapi.IN_QUERY, description="현재 위치의 경도", type=openapi.TYPE_NUMBER),
+            openapi.Parameter(
+                "is_active",
+                openapi.IN_QUERY,
+                description="거리순 정렬 활성 상태 필터 (True/False)",
+                type=openapi.TYPE_BOOLEAN,
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                "성공",
+                MainPagePlaceSerializer(many=True),
+                examples={
+                    "application/json": [
+                        {
+                            "name": "My Place 1",
+                            "address": "123 Example Street",
+                            "rating": 4,
+                            "description": "A lovely place for your pets.",
+                            "price_text": "20,000 KRW",
+                            "service_icons": ["Icon 1", "Icon 2"],
+                            "place_images": [
+                                "http://example.com/media/place_images/1.jpg",
+                                "http://example.com/media/place_images/2.jpg",
+                            ],
+                            "comments": [
+                                {
+                                    "comment_content": "Great place!",
+                                    "comment_images": ["http://example.com/media/comment_images/1.jpg"],
+                                    "comment_rating": 5,
+                                }
+                            ],
+                        }
+                    ]
+                },
+            ),
+            400: "잘못된 요청",
+        },
         tags=["MyPage"],
     )
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         user = request.user
-        bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")
-        bookmark_serializer = BookMarkSerializer(bookmarks, many=True)
+        place_region_id = request.GET.get("place_region")
+        place_subcategory_id = request.GET.get("place_subcategory")
+        ordering = request.GET.get("ordering", "-created_at")
+        latitude = request.GET.get("latitude")
+        longitude = request.GET.get("longitude")
+        page = request.GET.get("page", 1)
+        page_size = request.GET.get("page_size", 10)
 
-        return Response(bookmark_serializer.data, status=status.HTTP_200_OK)
+        bookmark_places_ids = BookMark.objects.filter(user=user).values_list("place_id", flat=True)
+        queryset = Place.objects.filter(id__in=bookmark_places_ids)
+
+        if place_region_id:
+            queryset = queryset.filter(place_region__id=place_region_id)
+
+        if place_subcategory_id:
+            queryset = queryset.filter(place_subcategory__id=place_subcategory_id)
+
+        if latitude and longitude:
+            try:
+                user_location = (float(latitude), float(longitude))
+                places_with_distance = []
+                for place in queryset:
+                    place_location = (place.latitude, place.longitude)
+                    distance = geodesic(place_location, user_location).meters
+                    places_with_distance.append((place, distance))
+
+                # 거리순으로 정렬
+                places_with_distance.sort(key=lambda x: x[1])
+                queryset = [place for place, distance in places_with_distance]
+            except ValueError:
+                return Response({"error": "Invalid latitude or longitude format"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            queryset = queryset.order_by(ordering)
+
+        paginator = PageNumberPagination()
+        paginator.page_size = page_size
+        result_page = paginator.paginate_queryset(queryset, request)
+
+        place_serializer = MainPagePlaceSerializer(result_page, many=True, context={"request": request})
+
+        place_subcategories = PlaceSubcategory.objects.all()
+        place_regions = PlaceRegion.objects.all()
+
+        subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
+        region_serializer = PlaceRegionSerializer(place_regions, many=True)
+
+        response_data = {
+            "place_subcategories": subcategory_serializer.data,
+            "place_regions": region_serializer.data,
+            "results": place_serializer.data,
+        }
+
+        return paginator.get_paginated_response(response_data)
 
 
 class ViewHistoryView(APIView):
