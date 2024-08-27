@@ -6,9 +6,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import generate_random_nickname
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 
 User = get_user_model()
 
@@ -18,8 +17,10 @@ class GoogleExchangeCodeForToken(APIView):
     permission_classes = [AllowAny]
 
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         code = request.data.get("code")
+        print(code)
+        print("여기냐")
         token_endpoint = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
@@ -28,12 +29,13 @@ class GoogleExchangeCodeForToken(APIView):
             "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
             "grant_type": "authorization_code",
         }
-
+        print(data)
         # 엑세스 토큰을 받는 코드
         try:
-            response = requests.post(token_endpoint, data=data)
+            response = requests.post(token_endpoint, data=data, headers={"Accept": "application/x-www-form-urlencoded"})
             response.raise_for_status()
             token_data = response.json()
+
             access_token = token_data.get("access_token")
 
             if not access_token:
@@ -61,32 +63,17 @@ class GoogleExchangeCodeForToken(APIView):
 
             # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
-            response_data = {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            }
+            print("refresh\n :", str(refresh))
+            # 쿠키에 토큰 저장 (세션 쿠키로 설정)
+            response = HttpResponseRedirect("https://dogandbaby.co.kr")  # 로그인 완료 시 리디렉션할 URL
+            # response = HttpResponseRedirect('http://localhost:8000/api/v1/users/myinfo')
 
-            # jwt토큰을 json형태로 쿠키에 전달하는 코드
-            response = JsonResponse(response_data)
-            response.set_cookie(
-                "refresh_token",
-                str(refresh),
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,
-                max_age=6060247,
-                samesite="Lax",
-            )
-            response.set_cookie(
-                "access_token",
-                str(refresh.access_token),
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,
-                max_age=6060247,
-                samesite="Lax",
-            )
+            # 배포 환경에서만 secure=True와 samesite='None' 설정
+            response.set_cookie("access_token", str(refresh.access_token), domain=".dogandbaby.co.kr", path="/")
+            response.set_cookie("refresh_token", str(refresh), domain=".dogandbaby.co.kr", path="/")
 
             return response
 
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
