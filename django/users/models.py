@@ -39,7 +39,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name="닉네임",
         default=generate_random_nickname,  # 함수 호출 없이 함수 객체를 사용
     )
-    profile_image = models.URLField(max_length=200, null=True, blank=True, verbose_name="프로필 이미지")
+    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True, verbose_name="프로필 이미지")
     is_staff = models.BooleanField(default=False, verbose_name="운영진")
     is_active = models.BooleanField(default=True, verbose_name="활성화")  # 사용자 활성화 상태 필드 추가
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일자")
