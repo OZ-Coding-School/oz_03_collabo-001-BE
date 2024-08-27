@@ -7,13 +7,15 @@ DEBUG = True
 ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "dogandbaby.co.kr", "13.125.130.26"]
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://api.dogandbaby.co.kr",
-    "https://api.dogandbaby.co.kr",
-    "http://www.dogandbaby.co.kr",
-    "https://www.dogandbaby.co.kr",
-    "https://dogandbaby.co.kr",  # 이 줄을 추가
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://api.dogandbaby.co.kr",
+#     "https://api.dogandbaby.co.kr",
+#     "http://www.dogandbaby.co.kr",
+#     "https://www.dogandbaby.co.kr",
+#     "https://dogandbaby.co.kr",  # 이 줄을 추가
+# ]
+
+CORS_ALLOWED_ORIGINS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://api.dogandbaby.co.kr",
