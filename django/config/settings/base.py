@@ -78,6 +78,7 @@ CUSTOM_INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "django_cleanup.apps.CleanupConfig",
+    "storages",
 ]
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + CUSTOM_APPS + CUSTOM_INSTALLED_APPS
@@ -229,8 +230,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
