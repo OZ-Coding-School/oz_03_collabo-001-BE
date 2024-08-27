@@ -33,7 +33,7 @@ class AegaPlaceWholeView(APIView):
             openapi.Parameter(
                 "main_category",
                 openapi.IN_QUERY,
-                description="펫존, 키즈존 구분 없으면, 전부조회 / pet or kids or 공백",
+                description="펫존, 키즈존 구분 없으면, 전부조회 / pet or kids or bd or (공백 or 랜덤문자)",
                 type=openapi.TYPE_STRING,
             ),
             openapi.Parameter("place_region", openapi.IN_QUERY, description="지역 필터링", type=openapi.TYPE_INTEGER),
@@ -90,11 +90,13 @@ class AegaPlaceWholeView(APIView):
         main_category = request.GET.get("main_category")
 
         if main_category == "":
-            main_category = "애개플레이스"
+            main_category = "전체"
         elif main_category == "pet":
             main_category = "펫존"
         elif main_category == "kids":
             main_category = "키즈존"
+        elif main_category == "bd":
+            main_category = "애개플레이스"
 
         place_region_id = request.GET.get("place_region")
         place_subcategory_id = request.GET.get("place_subcategory")
@@ -104,12 +106,14 @@ class AegaPlaceWholeView(APIView):
         page = request.GET.get("page", 1)
         page_size = request.GET.get("page_size", 10)
 
-        if main_category == "애개플레이스":
+        if main_category == "전체":
             queryset = Place.objects.all()
         elif main_category == "펫존":
             queryset = Place.objects.filter(category="pet_zone")
         elif main_category == "키즈존":
             queryset = Place.objects.filter(category="kid_zone")
+        elif main_category == "애개플레이스":
+            queryset = Place.objects.filter(category="bd_zone")
         else:
             queryset = Place.objects.all()
 
@@ -172,7 +176,7 @@ class AegaPlaceMainView(APIView):
         },
         manual_parameters=[
             openapi.Parameter(
-                "main_category", openapi.IN_PATH, description="main, pet, kids", type=openapi.TYPE_STRING
+                "main_category", openapi.IN_PATH, description="main, pet, kids, bd", type=openapi.TYPE_STRING
             ),
         ],
         tags=["AegaPlace - 1 - mainpage"],
@@ -181,26 +185,36 @@ class AegaPlaceMainView(APIView):
         main_category = kwargs.get("main_category")
 
         if main_category == "main":
-            main_category = "애개플레이스"
+            main_category = "전체"
         elif main_category == "pet":
             main_category = "펫존"
         elif main_category == "kids":
             main_category = "키즈존"
+        elif main_category == "bd":
+            main_category = "애개플레이스"
+            
+            
+        if main_category == "전체":
+            banner_obj = Banner.objects.filter(visible=True)
+            recommandedplace_obj = RecommendedPlace.objects.all()
+        else:
+            banner_obj = Banner.objects.filter(category__name=main_category, visible=True)
+            recommandedplace_obj = RecommendedPlace.objects.filter(category__name=main_category)
 
-        banner_obj = Banner.objects.filter(category__name=main_category, visible=True)
+            
         banner_serializer = MainPageBannerSerializer(banner_obj, many=True)
-
-        recommandedplace_obj = RecommendedPlace.objects.filter(category__name=main_category)
         recommandedplace_serializer = MainPageRecommendedPlaceSerializer(
             recommandedplace_obj, many=True, context={"request": request}
         )
 
         if main_category == "애개플레이스":
-            new_places_obj = Place.objects.all().order_by("-created_at")[:6]
+            new_places_obj = Place.objects.filter(category="bd_zone").order_by("-created_at")[:6]
         elif main_category == "펫존":
             new_places_obj = Place.objects.filter(category="pet_zone").order_by("-created_at")[:6]
         elif main_category == "키즈존":
             new_places_obj = Place.objects.filter(category="kid_zone").order_by("-created_at")[:6]
+        else:
+            new_places_obj = Place.objects.all().order_by("-created_at")[:6]
 
         new_places_serializer = MainPagePlaceSerializer(new_places_obj, many=True, context={"request": request})
 

@@ -35,6 +35,7 @@ class Place(CommonModel):
     CATEGORY_CHOICES = [
         ("pet_zone", "펫존"),
         ("kid_zone", "키즈존"),
+        ("bd_zone", "애개플레이스"),
     ]
 
     RATING_CHOICES = [
