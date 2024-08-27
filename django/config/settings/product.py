@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 
 # 로드 밸런스 사용시 ip 더 추가
 ALLOWED_HOSTS = ["api.dogandbaby.co.kr", "www.dogandbaby.co.kr", "dogandbaby.co.kr", "13.125.130.26"]

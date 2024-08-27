@@ -18,8 +18,10 @@ class GoogleExchangeCodeForToken(APIView):
     permission_classes = [AllowAny]
 
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         code = request.data.get("code")
+        print(code)
+        print("여기냐")
         token_endpoint = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
@@ -28,12 +30,13 @@ class GoogleExchangeCodeForToken(APIView):
             "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
             "grant_type": "authorization_code",
         }
-
+        print(data)
         # 엑세스 토큰을 받는 코드
         try:
-            response = requests.post(token_endpoint, data=data)
+            response = requests.post(token_endpoint, data=data, headers={"Accept": "application/x-www-form-urlencoded"})
             response.raise_for_status()
             token_data = response.json()
+            
             access_token = token_data.get("access_token")
 
             if not access_token:
@@ -65,28 +68,29 @@ class GoogleExchangeCodeForToken(APIView):
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
             }
-
+            
             # jwt토큰을 json형태로 쿠키에 전달하는 코드
             response = JsonResponse(response_data)
-            response.set_cookie(
-                "refresh_token",
-                str(refresh),
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,
-                max_age=6060247,
-                samesite="Lax",
-            )
-            response.set_cookie(
-                "access_token",
-                str(refresh.access_token),
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,
-                max_age=6060247,
-                samesite="Lax",
-            )
+            # response.set_cookie(
+            #     "refresh_token",
+            #     str(refresh),
+            #     httponly=True,
+            #     secure=settings.SESSION_COOKIE_SECURE,
+            #     max_age=6060247,
+            #     samesite="Lax",
+            # )
+            # response.set_cookie(
+            #     "access_token",
+            #     str(refresh.access_token),
+            #     httponly=True,
+            #     secure=settings.SESSION_COOKIE_SECURE,
+            #     max_age=6060247,
+            #     samesite="Lax",
+            # )
 
             return response
 
         except requests.exceptions.RequestException as e:
             # Handle token exchange or user info retrieval errors
+            print({"error": f"Internal Server Error: {str(e)}"}, status=500)
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
