@@ -192,8 +192,7 @@ class AegaPlaceMainView(APIView):
             main_category = "키즈존"
         elif main_category == "bd":
             main_category = "애개플레이스"
-            
-            
+
         if main_category == "전체":
             banner_obj = Banner.objects.filter(visible=True)
             recommandedplace_obj = RecommendedPlace.objects.all()
@@ -201,7 +200,6 @@ class AegaPlaceMainView(APIView):
             banner_obj = Banner.objects.filter(category__name=main_category, visible=True)
             recommandedplace_obj = RecommendedPlace.objects.filter(category__name=main_category)
 
-            
         banner_serializer = MainPageBannerSerializer(banner_obj, many=True)
         recommandedplace_serializer = MainPageRecommendedPlaceSerializer(
             recommandedplace_obj, many=True, context={"request": request}
