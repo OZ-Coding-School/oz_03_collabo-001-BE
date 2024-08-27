@@ -109,13 +109,16 @@ class AegaPlaceWholeView(APIView):
         if main_category == "전체":
             queryset = Place.objects.all()
         elif main_category == "펫존":
-            queryset = Place.objects.filter(category="pet_zone")
+            queryset = Place.objects.filter(category__in=["pet_zone", "bd_zone"])
         elif main_category == "키즈존":
-            queryset = Place.objects.filter(category="kid_zone")
+            queryset = Place.objects.filter(category__in=["kid_zone", "bd_zone"])
         elif main_category == "애개플레이스":
             queryset = Place.objects.filter(category="bd_zone")
         else:
             queryset = Place.objects.all()
+            
+            
+            
 
         if place_region_id:
             queryset = queryset.filter(place_region__id=place_region_id)
@@ -204,13 +207,13 @@ class AegaPlaceMainView(APIView):
         recommandedplace_serializer = MainPageRecommendedPlaceSerializer(
             recommandedplace_obj, many=True, context={"request": request}
         )
-
+        
         if main_category == "애개플레이스":
             new_places_obj = Place.objects.filter(category="bd_zone").order_by("-created_at")[:6]
         elif main_category == "펫존":
-            new_places_obj = Place.objects.filter(category="pet_zone").order_by("-created_at")[:6]
+            new_places_obj = Place.objects.filter(category__in=["pet_zone", "bd_zone"]).order_by("-created_at")[:6]
         elif main_category == "키즈존":
-            new_places_obj = Place.objects.filter(category="kid_zone").order_by("-created_at")[:6]
+            new_places_obj = Place.objects.filter(category__in=["kid_zone", "bd_zone"]).order_by("-created_at")[:6]
         else:
             new_places_obj = Place.objects.all().order_by("-created_at")[:6]
 
