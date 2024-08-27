@@ -8,16 +8,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web"]
 
-# 개발용 데이터베이스 설정
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8000",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -32,10 +26,19 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware", csrf꺼두고 테스트 진행중
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
+
+
+# 개발용 데이터베이스 설정
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}

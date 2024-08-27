@@ -6,22 +6,12 @@ SECRET_KEY = "django-insecure-g2$d_7hc#kw_^2%6sk4va_&xg1gsd#s8mgwwbi)r7+fkli4c^m
 # 서비스 배포시 False
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "web"]
 
-# 개발용 데이터베이스 설정
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "db",
-        "USER": "admin",
-        "PASSWORD": "admin",
-        "HOST": "db",
-        "PORT": "5432",
-    }
-}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8000",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -36,10 +26,23 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware", csrf꺼두고 테스트 진행중
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
 ]
+
+
+# 개발용 데이터베이스 설정
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "db",
+        "USER": "admin",
+        "PASSWORD": "admin",
+        "HOST": "db",
+        "PORT": "5432",
+    }
+}
