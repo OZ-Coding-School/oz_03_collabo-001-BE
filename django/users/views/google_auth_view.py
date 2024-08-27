@@ -4,11 +4,10 @@ import requests
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from users.utils import generate_random_nickname
 
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse, HttpResponseRedirect
-
-from users.utils import generate_random_nickname 
+from django.http import HttpResponseRedirect, JsonResponse
 
 User = get_user_model()
 
@@ -36,7 +35,7 @@ class GoogleExchangeCodeForToken(APIView):
             response = requests.post(token_endpoint, data=data, headers={"Accept": "application/x-www-form-urlencoded"})
             response.raise_for_status()
             token_data = response.json()
-            
+
             access_token = token_data.get("access_token")
 
             if not access_token:
@@ -66,12 +65,12 @@ class GoogleExchangeCodeForToken(APIView):
             refresh = RefreshToken.for_user(user)
             print("refresh\n :", str(refresh))
             # 쿠키에 토큰 저장 (세션 쿠키로 설정)
-            response = HttpResponseRedirect('https://dogandbaby.co.kr') # 로그인 완료 시 리디렉션할 URL
+            response = HttpResponseRedirect("https://dogandbaby.co.kr")  # 로그인 완료 시 리디렉션할 URL
             # response = HttpResponseRedirect('http://localhost:8000/api/v1/users/myinfo')
 
             # 배포 환경에서만 secure=True와 samesite='None' 설정
-            response.set_cookie('access_token', str(refresh.access_token), domain='.dogandbaby.co.kr', path='/')
-            response.set_cookie('refresh_token', str(refresh), domain='.dogandbaby.co.kr', path='/')
+            response.set_cookie("access_token", str(refresh.access_token), domain=".dogandbaby.co.kr", path="/")
+            response.set_cookie("refresh_token", str(refresh), domain=".dogandbaby.co.kr", path="/")
 
             return response
 
