@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import generate_random_nickname
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, JsonResponse
@@ -78,7 +79,8 @@ class GoogleExchangeCodeForToken(APIView):
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
-                "access": str(refresh.access_token),}           
+                "access": str(refresh.access_token),
+            }
             response = JsonResponse(response_data)
             response.set_cookie(
                 "refresh_token",
@@ -98,7 +100,6 @@ class GoogleExchangeCodeForToken(APIView):
             )
 
             return response
-
 
         except Exception as e:
             # Handle token exchange or user info retrieval errors
