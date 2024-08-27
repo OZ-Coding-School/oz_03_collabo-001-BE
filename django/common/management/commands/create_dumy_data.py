@@ -3,6 +3,7 @@ import random
 import urllib.request
 
 from common.models import Banner, Category
+from geopy.geocoders import Nominatim
 from places.models import Place, PlaceImage, PlaceRegion, PlaceSubcategory, ServicesIcon
 from users.models import CustomUser
 from users.utils import generate_random_nickname
@@ -12,10 +13,33 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.management.base import BaseCommand
 
 
+def getRandomAddress():
+    # Nominatim 지오코더 객체 생성
+    geolocator = Nominatim(user_agent="geoapiExercises")
+
+    # 위도와 경도의 범위 설정 (한국 대부분 지역)
+    min_lat, max_lat = 35.136077, 37.680704
+    min_lon, max_lon = 126.659877, 128.945123
+
+    # 랜덤한 위도와 경도 생성
+    random_latitude = random.uniform(min_lat, max_lat)
+    random_longitude = random.uniform(min_lon, max_lon)
+
+    # 랜덤 좌표로부터 주소 얻기
+    location = geolocator.reverse((random_latitude, random_longitude), exactly_one=True, language="ko")
+
+    if location:
+        random_address = " ".join(location.address.split(",")[::-1]).strip()
+    else:
+        random_address = "some address"
+    return random_address
+
+
 class Command(BaseCommand):
     help = "Create initial data for Category and Banner models"
 
     def handle(self, *args, **kwargs):
+
         categories = [
             "마이페이지",
             "애개플레이스",
@@ -70,16 +94,17 @@ class Command(BaseCommand):
                 return
 
             # Place 더미데이터
-            for i in range(10):
+            for i in range(30):
+
                 place = Place(
                     name=generate_random_nickname(),
-                    description=f"Description for place {i+1}",
-                    address=f"Address for place {i+1}",
-                    price_text="10000",
+                    description_tags=f"Description for place {i+1}",
+                    address=getRandomAddress(),
+                    price_text=f"10000{i+1}",
                     price_link="https://example.com",
                     rating=random.choice([1, 2, 3, 4, 5]),
-                    instruction="Some instructions",
-                    category=random.choice(["펫존", "키즈존"]),
+                    instruction=f"Some instructions {i+1}",
+                    category=random.choice(["bd_zone", "kid_zone", "pet_zone"]),
                     user=CustomUser.objects.first(),  # Assuming there is at least one user
                 )
 
@@ -91,11 +116,12 @@ class Command(BaseCommand):
 
                 # Place Region - 1 random selection
                 selected_region = random.choice(place_regions)
-                place.place_region.set([selected_region])
+
+                place.place_region = selected_region
 
                 # Place Subcategory - 1 random selection
                 selected_subcategory = random.choice(place_subcategories)
-                place.place_subcategory.set([selected_subcategory])
+                place.place_subcategory = selected_subcategory
 
                 for j in range(10):
                     place_image = PlaceImage(

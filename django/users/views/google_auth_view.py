@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.utils import generate_random_nickname
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, JsonResponse
 
@@ -65,12 +66,38 @@ class GoogleExchangeCodeForToken(APIView):
             refresh = RefreshToken.for_user(user)
             print("refresh\n :", str(refresh))
             # 쿠키에 토큰 저장 (세션 쿠키로 설정)
-            response = HttpResponseRedirect("https://dogandbaby.co.kr")  # 로그인 완료 시 리디렉션할 URL
-            # response = HttpResponseRedirect('http://localhost:8000/api/v1/users/myinfo')
+            # response = HttpResponseRedirect("https://dogandbaby.co.kr")  # 로그인 완료 시 리디렉션할 URL
+            # # response = HttpResponseRedirect('http://localhost:8000/api/v1/users/myinfo')
 
-            # 배포 환경에서만 secure=True와 samesite='None' 설정
-            response.set_cookie("access_token", str(refresh.access_token), domain=".dogandbaby.co.kr", path="/")
-            response.set_cookie("refresh_token", str(refresh), domain=".dogandbaby.co.kr", path="/")
+            # # 배포 환경에서만 secure=True와 samesite='None' 설정
+            # response.set_cookie("access_token", str(refresh.access_token), domain=".dogandbaby.co.kr", path="/")
+            # response.set_cookie("refresh_token", str(refresh), domain=".dogandbaby.co.kr", path="/")
+
+            # return response
+
+            # jwt 토큰 생성
+            refresh = RefreshToken.for_user(user)
+            response_data = {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
+            response = JsonResponse(response_data)
+            response.set_cookie(
+                "refresh_token",
+                str(refresh),
+                httponly=True,
+                secure=settings.SESSION_COOKIE_SECURE,
+                max_age=6060247,
+                samesite="Lax",
+            )
+            response.set_cookie(
+                "access_token",
+                str(refresh.access_token),
+                httponly=True,
+                secure=settings.SESSION_COOKIE_SECURE,
+                max_age=6060247,
+                samesite="Lax",
+            )
 
             return response
 
