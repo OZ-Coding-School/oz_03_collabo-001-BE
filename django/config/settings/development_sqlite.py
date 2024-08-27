@@ -43,20 +43,52 @@ DATABASES = {
     }
 }
 
-# AWS S3 설정
-AWS_ACCESS_KEY_ID = os.getenv('AWS_S3_ACCESS_KEY_ID', 'access_key')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_S3_SECRET_ACCESS_KEY', 'secret_key')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_S3_STORAGE_BUCKET_NAME', 'some_bucket_name')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_S3_REGION_NAME', 'ap-northeast-2')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# s3테스트 할때 주석처리
+MEDIA_URL = "/media/"
+# s3테스트 할때 주석처리
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
-# S3를 기본 파일 저장 위치로 설정
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+###############################################################################################
+###############################################################################################
 
-# 업로드된 파일의 URL 형식 설정
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+#                                      S3  설정  시작
 
-# 미디어 파일이 저장될 폴더 경로 설정
-MEDIAFILES_LOCATION = 'media'
-AWS_LOCATION = MEDIAFILES_LOCATION
+###############################################################################################
+###############################################################################################
+# # AWS S3 설정
+# AWS_ACCESS_KEY_ID = os.getenv("AWS_S3_ACCESS_KEY_ID", "access_key")
+# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_S3_SECRET_ACCESS_KEY", "secret_key")
+# AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_S3_STORAGE_BUCKET_NAME", "some_bucket_name")
+# AWS_S3_REGION_NAME = os.getenv("AWS_S3_S3_REGION_NAME", "ap-northeast-2")
+# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+
+# # S3를 기본 파일 저장 위치로 설정
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+# # 업로드된 파일의 URL 형식 설정
+# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
+# # 미디어 파일이 저장될 폴더 경로 설정
+# MEDIAFILES_LOCATION = "media"
+# AWS_LOCATION = MEDIAFILES_LOCATION
+
+
+# STORAGES = {
+#     "default": {
+#         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+#     },
+#     "staticfiles": {
+#         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+#     },
+# }
+
+###############################################################################################
+###############################################################################################
+
+#                                      S3  끝
+
+###############################################################################################
+###############################################################################################

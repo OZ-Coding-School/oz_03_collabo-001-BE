@@ -66,11 +66,9 @@ class MyProfileView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 
 class UpdateProfileImageView(APIView):
@@ -106,30 +104,27 @@ class UpdateProfileImageView(APIView):
     def post(self, request):
         user = request.user
         profile_image = request.FILES.get("profile_image")
-        
-        logger.debug(f"User {user.username} is attempting to upload a file.")
 
+        logger.debug(f"User {user.nickname} is attempting to upload a file.")
 
         if not profile_image:
             logger.error("No profile image provided.")
 
             raise ValidationError("No profile image provided.")
-        
-        
+
         logger.debug(f"Received file: {profile_image.name}, Size: {profile_image.size} bytes")
-
-
 
         user.profile_image = profile_image
         user.save()
-        
-        logger.info(f"Profile image for user {user.username} updated successfully.")
 
+        logger.info(f"Profile image for user {user.nickname} updated successfully.")
 
         # S3에 저장된 이미지의 URL 가져오기
         image_url = user.profile_image.url
 
-        return Response({"message": "Profile image updated successfully.", "image_url": image_url}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Profile image updated successfully.", "image_url": image_url}, status=status.HTTP_200_OK
+        )
 
 
 class UpdateProfileNameView(APIView):
