@@ -1,7 +1,8 @@
 from common.models import Banner
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from places.models import Comments
+from places.models import Comments, Place
+from places.serializers import MainPagePlaceSerializer
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -29,13 +30,15 @@ class MyProfileView(APIView):
         user = request.user
         profile_serializer = UserProfileSerializer(user)
 
-        # Get recent 3 bookmarks
-        bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")[:3]
-        bookmark_serializer = BookMarkSerializer(bookmarks, many=True)
+        new_places_obj = Place.objects.filter(user=user).order_by("-created_at")[:3]
+        places_serializer = MainPagePlaceSerializer(new_places_obj, many=True, context={"request": request})
 
-        # Get recent 3 view histories
-        view_histories = ViewHistory.objects.filter(user=user).order_by("-created_at")[:3]
-        view_history_serializer = ViewHistorySerializer(view_histories, many=True)
+        # ViewHistory를 통해 최근 본 장소 목록 가져오기
+        view_history_objects = ViewHistory.objects.filter(user=user).order_by("-created_at")[:3]
+
+        # ViewHistory에서 Place 객체만 추출
+        places = [vh.place for vh in view_history_objects]
+        history_places_serializer = MainPagePlaceSerializer(places, many=True, context={"request": request})
 
         # Get recent 2 comments from all users
         recent_comments = Comments.objects.all().order_by("-created_at")[:2]
@@ -47,8 +50,8 @@ class MyProfileView(APIView):
 
         data = {
             "profile": profile_serializer.data,
-            "recent_bookmarks": bookmark_serializer.data,
-            "recent_view_histories": view_history_serializer.data,
+            "recent_bookmarks": places_serializer.data,
+            "recent_view_histories": history_places_serializer.data,
             "recent_comments": comments_serializer.data,
             "banners": banner_serializer.data,
         }

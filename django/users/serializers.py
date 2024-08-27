@@ -11,7 +11,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class BookMarkSerializer(serializers.ModelSerializer):
-    bookmark = serializers.BooleanField(source="bookmark_check")
     image = serializers.URLField(source="place.store_image")
     place_name = serializers.CharField(source="place.name")
     rating = serializers.IntegerField(source="place.rating")
@@ -19,7 +18,7 @@ class BookMarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookMark
-        fields = ["bookmark", "image", "place_name", "rating", "comments_count"]
+        fields = ["id", "bookmark", "image", "place_name", "rating", "comments_count"]
 
     def get_comments_count(self, obj):
         return Comments.objects.filter(place=obj.place).count()
@@ -52,7 +51,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comments
-        fields = ["place_image", "place_name", "rating_point", "create_date", "content", "comments_images"]
+        fields = ["id", "place_image", "place_name", "rating_point", "create_date", "content", "comments_images"]
 
     def get_create_date(self, obj):
         return obj.created_at.strftime("%Y.%m.%d")  # 날짜 부분만 추출
