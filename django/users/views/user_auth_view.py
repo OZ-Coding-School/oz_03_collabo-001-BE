@@ -73,6 +73,8 @@ class RefreshAccessTokenView(APIView):
                 httponly=True,
                 samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                 secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+                domain=".dogandbaby.co.kr",
+                path="/"
             )
 
             # 새 refresh token 설정 (선택적)
@@ -85,6 +87,8 @@ class RefreshAccessTokenView(APIView):
                     httponly=True,
                     samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                     secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+                    domain=".dogandbaby.co.kr",
+                    path="/"
                 )
 
             return response
@@ -107,13 +111,13 @@ class SocialLogout(APIView):
             domain=".dogandbaby.co.kr",
             path="/",
             secure=settings.SESSION_COOKIE_SECURE,
-            samesite="Lax",
+            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
         )
         response.delete_cookie(
             "refresh_token",
             domain=".dogandbaby.co.kr",
             path="/",
             secure=settings.SESSION_COOKIE_SECURE,
-            samesite="Lax",
+            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
         )
         return response
