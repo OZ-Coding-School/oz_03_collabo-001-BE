@@ -92,7 +92,8 @@ class RefreshAccessTokenView(APIView):
         except (InvalidToken, TokenError) as e:
             return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
-#로그인시 생기는 쿠키와 로그아웃시 삭제할 쿠키의 속성이 같아야함
+
+# 로그인시 생기는 쿠키와 로그아웃시 삭제할 쿠키의 속성이 같아야함
 class SocialLogout(APIView):
     authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated]
