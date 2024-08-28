@@ -20,8 +20,6 @@ class GoogleExchangeCodeForToken(APIView):
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
     def post(self, request, *args, **kwargs):
         code = request.data.get("code")
-        print(code)
-        print("여기냐")
         token_endpoint = "https://oauth2.googleapis.com/token"
         data = {
             "code": code,
@@ -30,7 +28,6 @@ class GoogleExchangeCodeForToken(APIView):
             "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
             "grant_type": "authorization_code",
         }
-        print(data)
         # 엑세스 토큰을 받는 코드
         try:
             response = requests.post(token_endpoint, data=data, headers={"Accept": "application/x-www-form-urlencoded"})
@@ -61,19 +58,6 @@ class GoogleExchangeCodeForToken(APIView):
             }
             # 유저 정보 생성
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
-
-            # jwt 토큰 생성
-            refresh = RefreshToken.for_user(user)
-            print("refresh\n :", str(refresh))
-            # 쿠키에 토큰 저장 (세션 쿠키로 설정)
-            # response = HttpResponseRedirect("https://dogandbaby.co.kr")  # 로그인 완료 시 리디렉션할 URL
-            # # response = HttpResponseRedirect('http://localhost:8000/api/v1/users/myinfo')
-
-            # # 배포 환경에서만 secure=True와 samesite='None' 설정
-            # response.set_cookie("access_token", str(refresh.access_token), domain=".dogandbaby.co.kr", path="/")
-            # response.set_cookie("refresh_token", str(refresh), domain=".dogandbaby.co.kr", path="/")
-
-            # return response
 
             # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
