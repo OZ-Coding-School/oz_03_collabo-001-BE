@@ -106,15 +106,6 @@ class SocialLogout(APIView):
         response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
 
         # 쿠키 삭제 시 도메인, 경로 등의 설정을 일치시킴
-        response.delete_cookie(
-            settings.SIMPLE_JWT["AUTH_COOKIE"],
-            domain='.dogandbaby.co.kr',
-            path='/'
-        )
-        response.delete_cookie(
-            "refresh_token",
-            domain='.dogandbaby.co.kr',
-            path='/'
-        )
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"], domain=".dogandbaby.co.kr", path="/")
+        response.delete_cookie("refresh_token", domain=".dogandbaby.co.kr", path="/")
         return response
-    
