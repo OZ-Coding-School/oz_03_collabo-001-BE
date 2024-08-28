@@ -8,7 +8,7 @@ from users.utils import generate_random_nickname
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 
 User = get_user_model()
 
@@ -89,7 +89,6 @@ class GoogleExchangeCodeForToken(APIView):
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
                 samesite="Lax",
-                domain=".dogandbaby.co.kr",
             )
             response.set_cookie(
                 "access_token",
@@ -98,7 +97,6 @@ class GoogleExchangeCodeForToken(APIView):
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
                 samesite="Lax",
-                domain=".dogandbaby.co.kr",
             )
 
             return response
