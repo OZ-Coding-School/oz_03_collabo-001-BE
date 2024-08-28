@@ -27,38 +27,40 @@ class KakaoExchangeCodeForToken(APIView):
             "code": code,
         }
 
-  # 엑세스 토큰을 받는 코드
         try:
-            response = requests.post(token_endpoint, data=data, headers={"Accept": "application/x-www-form-urlencoded"})
+            response = requests.post(token_endpoint, data=data)
             response.raise_for_status()
             token_data = response.json()
-
             access_token = token_data.get("access_token")
 
             if not access_token:
                 return JsonResponse({"error": "Failed to obtain access token"}, status=400)
 
-            # 액세스토큰을 통해 유저정보를 요청하는 코드
-            userinfo_endpoint = "https://www.googleapis.com/oauth2/v3/userinfo"
+            userinfo_endpoint = "https://kapi.kakao.com/v2/user/me"
             headers = {"Authorization": f"Bearer {access_token}"}
             user_info_response = requests.get(userinfo_endpoint, headers=headers)
             user_info_response.raise_for_status()
             user_info = user_info_response.json()
 
-            # user모델에서 필요한 정보 가져오는 코드
-            email = user_info.get("email")
-            if not email:
-                return JsonResponse({"error": "Email not found in user info"}, status=400)
+            nickname = user_info.get("properties", {}).get("nickname")
+            if not nickname:
+                return JsonResponse({"error": "Nickname not found in user info"}, status=400)
+
+            # 고유한 식별자로 카카오 ID를 사용
+            kakao_id = str(user_info.get("id"))
+            if not kakao_id:
+                return JsonResponse({"error": "Kakao ID not found"}, status=400)
 
             user_data = {
-                "email": email,
-                "profile_image": user_info.get("picture"),
-                "nickname": generate_random_nickname(),
+                "email": f"kakao_{kakao_id}@example.com",  # 고유한 이메일 생성
+                "nickname": nickname,
+                "profile_image": user_info.get("properties", {}).get("profile_image"),
             }
-            # 유저 정보 생성
-            user, created = User.objects.get_or_create(email=email, defaults=user_data)
 
-            # jwt 토큰 생성
+            # `email`을 사용자 식별자로 사용하여 사용자 생성 또는 가져오기
+            user, created = User.objects.get_or_create(email=user_data["email"], defaults=user_data)
+
+ # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
