@@ -96,8 +96,7 @@ class RefreshAccessTokenView(APIView):
         except (InvalidToken, TokenError) as e:
             return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-# 로그인시 생기는 쿠키와 로그아웃시 삭제할 쿠키의 속성이 같아야함class SocialLogout(APIView):
+    # 로그인시 생기는 쿠키와 로그아웃시 삭제할 쿠키의 속성이 같아야함class SocialLogout(APIView):
     authentication_classes = [CookieJWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -105,14 +104,6 @@ class RefreshAccessTokenView(APIView):
         response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
 
         # 쿠키 삭제 시 도메인, 경로 등의 설정을 일치시킴
-        response.delete_cookie(
-            settings.SIMPLE_JWT["AUTH_COOKIE"],
-            domain='.dogandbaby.co.kr',
-            path='/'
-        )
-        response.delete_cookie(
-            "refresh_token",
-            domain='.dogandbaby.co.kr',
-            path='/'
-        )
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"], domain=".dogandbaby.co.kr", path="/")
+        response.delete_cookie("refresh_token", domain=".dogandbaby.co.kr", path="/")
         return response
