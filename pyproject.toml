@@ -29,6 +29,8 @@ django-cleanup = "^8.1.0"
 python-decouple = "^3.8"
 gunicorn = "^23.0.0"
 geopy = "^2.4.1"
+boto3 = "^1.35.6"
+django-storages = "^1.14.4"
 
 
 
