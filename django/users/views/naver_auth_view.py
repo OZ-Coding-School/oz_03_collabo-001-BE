@@ -56,7 +56,7 @@ class NaverExchangeCodeForToken(APIView):
                 "nickname": generate_random_nickname(),
             }
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
-# jwt 토큰 생성
+            # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),

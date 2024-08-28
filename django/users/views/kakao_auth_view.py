@@ -60,7 +60,7 @@ class KakaoExchangeCodeForToken(APIView):
             # `email`을 사용자 식별자로 사용하여 사용자 생성 또는 가져오기
             user, created = User.objects.get_or_create(email=user_data["email"], defaults=user_data)
 
- # jwt 토큰 생성
+            # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
