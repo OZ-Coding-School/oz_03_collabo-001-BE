@@ -77,8 +77,6 @@ class RefreshAccessTokenView(APIView):
                 path="/",
             )
 
-
-
             # 새 refresh token 설정 (선택적)
             if settings.SIMPLE_JWT.get("ROTATE_REFRESH_TOKENS", False):
                 new_refresh_token = str(refresh)
@@ -108,18 +106,6 @@ class SocialLogout(APIView):
         response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
 
         # 쿠키 삭제 시 설정했던 domain, path, secure 등의 설정을 일치시킴
-        response.delete_cookie(
-            settings.SIMPLE_JWT["AUTH_COOKIE"],
-            domain=".dogandbaby.co.kr",
-            path="/",
-            secure=settings.SESSION_COOKIE_SECURE,
-            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
-        )
-        response.delete_cookie(
-            "refresh_token",
-            domain=".dogandbaby.co.kr",
-            path="/",
-            secure=settings.SESSION_COOKIE_SECURE,
-            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
-        )
+        response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
+        response.delete_cookie("refresh_token")
         return response
