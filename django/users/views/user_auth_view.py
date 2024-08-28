@@ -77,8 +77,6 @@ class RefreshAccessTokenView(APIView):
                 path="/",
             )
 
-
-
             # 새 refresh token 설정 (선택적)
             if settings.SIMPLE_JWT.get("ROTATE_REFRESH_TOKENS", False):
                 new_refresh_token = str(refresh)
