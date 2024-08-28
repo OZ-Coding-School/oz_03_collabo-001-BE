@@ -19,7 +19,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://dogandbaby.co.kr",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True  # 쿠키 및 인증 헤더를 허용합니다.
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
@@ -27,7 +27,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True  # HTTPS에서만 CSRF 쿠키 전송
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
+SESSION_COOKIE_DOMAIN = '.dogandbaby.co.kr'
+CSRF_COOKIE_DOMAIN = '.dogandbaby.co.kr'
 
 DATABASES = {
     "default": {
@@ -72,32 +73,3 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
-
-# AWS S3 설정
-AWS_ACCESS_KEY_ID = os.getenv("AWS_S3_ACCESS_KEY_ID", "access_key")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_S3_SECRET_ACCESS_KEY", "secret_key")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_S3_STORAGE_BUCKET_NAME", "some_bucket_name")
-AWS_S3_REGION_NAME = os.getenv("AWS_S3_S3_REGION_NAME", "ap-northeast-2")
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-
-
-# S3를 기본 파일 저장 위치로 설정
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-
-# 업로드된 파일의 URL 형식 설정
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-
-# 미디어 파일이 저장될 폴더 경로 설정
-MEDIAFILES_LOCATION = "media"
-AWS_LOCATION = MEDIAFILES_LOCATION
-
-# s3 storage 설정
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
