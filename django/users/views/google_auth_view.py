@@ -87,6 +87,7 @@ class GoogleExchangeCodeForToken(APIView):
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
                 samesite="Lax",
+                domain=".dogandbaby.co.kr",
             )
             response.set_cookie(
                 "access_token",
@@ -95,6 +96,7 @@ class GoogleExchangeCodeForToken(APIView):
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
                 samesite="Lax",
+                domain=".dogandbaby.co.kr",
             )
 
             return response
