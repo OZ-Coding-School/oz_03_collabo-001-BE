@@ -56,17 +56,17 @@ class NaverExchangeCodeForToken(APIView):
                 "nickname": generate_random_nickname(),
             }
             user, created = User.objects.get_or_create(email=email, defaults=user_data)
-
+# jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
             }
-
             response = JsonResponse(response_data)
             response.set_cookie(
                 "refresh_token",
                 str(refresh),
+                domain=".dogandbaby.co.kr",
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
@@ -75,6 +75,7 @@ class NaverExchangeCodeForToken(APIView):
             response.set_cookie(
                 "access_token",
                 str(refresh.access_token),
+                domain=".dogandbaby.co.kr",
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
@@ -83,15 +84,6 @@ class NaverExchangeCodeForToken(APIView):
 
             return response
 
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
+            # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
-
-
-class NaverSocialLogout(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        response = Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
-        return response
