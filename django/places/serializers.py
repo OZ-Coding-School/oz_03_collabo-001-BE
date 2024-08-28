@@ -29,7 +29,7 @@ class MainPagePlaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Place
-        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "rating", "comments_count"]
+        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "address", "rating", "comments_count"]
 
     def get_comments_count(self, obj):
         user = self.context["request"].user

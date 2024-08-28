@@ -35,6 +35,12 @@ MIDDLEWARE = [
 ]
 
 
+# s3테스트 할때 주석처리
+MEDIA_URL = "/media/"
+# s3테스트 할때 주석처리
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
 # 개발용 데이터베이스 설정
 DATABASES = {
     "default": {
