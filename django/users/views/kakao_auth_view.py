@@ -60,16 +60,17 @@ class KakaoExchangeCodeForToken(APIView):
             # `email`을 사용자 식별자로 사용하여 사용자 생성 또는 가져오기
             user, created = User.objects.get_or_create(email=user_data["email"], defaults=user_data)
 
+            # jwt 토큰 생성
             refresh = RefreshToken.for_user(user)
             response_data = {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
             }
-
             response = JsonResponse(response_data)
             response.set_cookie(
                 "refresh_token",
                 str(refresh),
+                domain=".dogandbaby.co.kr",
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
@@ -78,6 +79,7 @@ class KakaoExchangeCodeForToken(APIView):
             response.set_cookie(
                 "access_token",
                 str(refresh.access_token),
+                domain=".dogandbaby.co.kr",
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
@@ -86,5 +88,6 @@ class KakaoExchangeCodeForToken(APIView):
 
             return response
 
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
+            # Handle token exchange or user info retrieval errors
             return JsonResponse({"error": f"Internal Server Error: {str(e)}"}, status=500)
