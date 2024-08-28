@@ -27,8 +27,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True  # HTTPS에서만 CSRF 쿠키 전송
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SESSION_COOKIE_DOMAIN = '.dogandbaby.co.kr'
-CSRF_COOKIE_DOMAIN = '.dogandbaby.co.kr'
+SESSION_COOKIE_DOMAIN = ".dogandbaby.co.kr"
+CSRF_COOKIE_DOMAIN = ".dogandbaby.co.kr"
 
 DATABASES = {
     "default": {
