@@ -74,7 +74,7 @@ class RefreshAccessTokenView(APIView):
                 samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                 secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
                 domain=".dogandbaby.co.kr",
-                path="/"
+                path="/",
             )
 
             # 새 refresh token 설정 (선택적)
@@ -88,7 +88,7 @@ class RefreshAccessTokenView(APIView):
                     samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                     secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
                     domain=".dogandbaby.co.kr",
-                    path="/"
+                    path="/",
                 )
 
             return response
