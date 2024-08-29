@@ -23,7 +23,7 @@ class AegaPlaceWholeView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
-        operation_summary="애개플레이스 전체 게시글 조회",
+        operation_summary="애개플레이스 전체 게시글 조회 🐾",
         operation_description=(
             "애개플레이스 전체 게시글을 조회합니다. \n"
             "place_region, place_subcategory에 따라 필터링할 수 있으며, 거리순으로 정렬할 수 있습니다. \n"
