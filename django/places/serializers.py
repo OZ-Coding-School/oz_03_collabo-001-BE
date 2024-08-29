@@ -26,6 +26,7 @@ class PlaceSubcategorySerializer(serializers.ModelSerializer):
 class MainPagePlaceSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
+    store_image = serializers.ImageField(source='place.store_image', read_only=True)
 
     class Meta:
         model = Place
