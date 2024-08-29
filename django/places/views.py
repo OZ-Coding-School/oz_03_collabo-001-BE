@@ -416,7 +416,11 @@ class AegaPlaceView(APIView):
         user = request.user
         if user.is_authenticated:
             user = CustomUser.objects.get(id=request.user.id)
+            # Remove the old entry if it exists
+            ViewHistory.objects.filter(user=user, place=place).delete()
+            # Create a new entry to ensure it is the most recent
             ViewHistory.objects.create(user=user, place=place)
+        
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
