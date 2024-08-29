@@ -155,9 +155,12 @@ class AegaPlaceWholeView(APIView):
         subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
         region_serializer = PlaceRegionSerializer(place_regions, many=True)
 
+        subcategory_serializer_data = [{"id": "", "subcategory": "전체"}] + subcategory_serializer.data
+        region_serializer_data = [{"id": "", "region": "전체"}] + region_serializer.data
+
         response_data = {
-            "place_subcategories": subcategory_serializer.data,
-            "place_regions": region_serializer.data,
+            "place_subcategories": subcategory_serializer_data,
+            "place_regions": region_serializer_data,
             "results": place_serializer.data,
         }
 
@@ -313,10 +316,12 @@ class MyPlaceHistroyView(APIView):
         subcategory_serializer = PlaceSubcategorySerializer(place_subcategories, many=True)
         region_serializer = PlaceRegionSerializer(place_regions, many=True)
 
-        # Prepare the response data
+        subcategory_serializer_data = [{"id": "", "subcategory": "전체"}] + subcategory_serializer.data
+        region_serializer_data = [{"id": "", "region": "전체"}] + region_serializer.data
+
         response_data = {
-            "place_subcategories": subcategory_serializer.data,
-            "place_regions": region_serializer.data,
+            "place_subcategories": subcategory_serializer_data,
+            "place_regions": region_serializer_data,
             "results": place_serializer.data,
         }
 
