@@ -26,11 +26,21 @@ class PlaceSubcategorySerializer(serializers.ModelSerializer):
 class MainPagePlaceSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
-    store_image = serializers.ImageField(source='place.store_image', read_only=True)
+    store_image = serializers.ImageField(source="place.store_image", read_only=True)
 
     class Meta:
         model = Place
-        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "address", "rating", "comments_count"]
+        fields = [
+            "id",
+            "store_image",
+            "is_bookmarked",
+            "place_region",
+            "place_subcategory",
+            "name",
+            "address",
+            "rating",
+            "comments_count",
+        ]
 
     def get_comments_count(self, obj):
         user = self.context["request"].user

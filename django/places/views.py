@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import CustomUser, ViewHistory
 
+from django.db.models import OuterRef, Subquery
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import CommentImage, Place, PlaceSubcategory, RecommendedPlace
@@ -162,7 +164,6 @@ class AegaPlaceWholeView(APIView):
         return paginator.get_paginated_response(response_data)
 
 
-
 class MyPlaceHistroyView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -260,8 +261,24 @@ class MyPlaceHistroyView(APIView):
         }
         viewhistory_queryset = category_filters.get(main_category, ViewHistory.objects.filter(user=request.user))
 
-        # Extract Place objects from the filtered ViewHistory queryset
-        place_queryset = Place.objects.filter(id__in=viewhistory_queryset.values_list('place_id', flat=True))
+        # Annotate the place_queryset with the latest updated_at from ViewHistory and order by it
+        latest_viewhistory_subquery = (
+            ViewHistory.objects.filter(place=OuterRef("pk"), user=request.user)
+            .order_by("-updated_at")
+            .values("updated_at")[:1]
+        )
+
+        place_queryset = (
+            Place.objects.filter(id__in=viewhistory_queryset.values_list("place_id", flat=True))
+            .annotate(latest_viewhistory=Subquery(latest_viewhistory_subquery))
+            .order_by("-latest_viewhistory")
+        )
+
+        # Filter by place_region and place_subcategory if provided
+        if place_region_id:
+            place_queryset = place_queryset.filter(place_region__id=place_region_id)
+        if place_subcategory_id:
+            place_queryset = place_queryset.filter(place_subcategory__id=place_subcategory_id)
 
         # Filter by place_region and place_subcategory if provided
         if place_region_id:
@@ -281,8 +298,6 @@ class MyPlaceHistroyView(APIView):
                 place_queryset = [place for place, _ in places_with_distance]
             except ValueError:
                 return Response({"error": "Invalid latitude or longitude format"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            place_queryset = place_queryset.order_by(ordering)
 
         # Paginate the queryset
         paginator = PageNumberPagination()
@@ -306,15 +321,6 @@ class MyPlaceHistroyView(APIView):
         }
 
         return paginator.get_paginated_response(response_data)
-
-
-
-
-
-
-
-
-
 
 
 class AegaPlaceMainView(APIView):
@@ -415,12 +421,12 @@ class AegaPlaceView(APIView):
 
         user = request.user
         if user.is_authenticated:
-            user = CustomUser.objects.get(id=request.user.id)
-            # Remove the old entry if it exists
-            ViewHistory.objects.filter(user=user, place=place).delete()
-            # Create a new entry to ensure it is the most recent
-            ViewHistory.objects.create(user=user, place=place)
-        
+            # Try to retrieve the existing view history record
+            view_history, created = ViewHistory.objects.get_or_create(user=user, place=place)
+            if not created:
+                # If the record already exists, update the timestamp
+                view_history.updated_at = timezone.now()
+                view_history.save()
 
         serializer = AegaPlaceDetailSerializer(place, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
