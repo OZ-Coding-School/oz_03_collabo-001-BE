@@ -26,8 +26,8 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker-compose -f docker-compose-pro.yml build web  # 'web' 서비스 이미지를 빌드
-        docker-compose -f docker-compose-pro.yml push web  # 빌드된 'web' 이미지 Docker Hub에 푸시
+        docker-compose -f docker-compose-pro.yml build web
+        docker-compose -f docker-compose-pro.yml push web
 
     - name: Deploy to server
       uses: appleboy/ssh-action@master
@@ -38,6 +38,6 @@ jobs:
         port: ${{ secrets.AWS_SSH_PORT }}
         script: |
           cd /home/ec2-user/oz_03_collabo-001-BE 
-          sudo docker-compose -f docker-compose-pro.yml pull  # Docker Hub에서 최신 이미지 가져오기
-          sudo docker-compose -f docker-compose-pro.yml down  # 기존 컨테이너 중지
-          sudo docker-compose -f docker-compose-pro.yml up -d  # 최신 이미지로 컨테이너 시작
+          sudo docker-compose -f docker-compose-pro.yml pull
+          sudo docker-compose -f docker-compose-pro.yml down
+          sudo docker-compose -f docker-compose-pro.yml up -d
