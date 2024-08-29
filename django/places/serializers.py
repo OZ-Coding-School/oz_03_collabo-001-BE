@@ -162,7 +162,10 @@ class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         # Assuming `CommentImage` has a field `image` that stores the image file
-        return [image.image.url for image in obj.comment_images.all()]
+        return [
+            {"url": image.image.url, "created_at": image.created_at, "updated_at": image.updated_at}
+            for image in obj.comment_images.all()
+        ]
 
     def create(self, validated_data):
         user = self.context["user"]
