@@ -29,7 +29,7 @@ class MainPagePlaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Place
-        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "rating", "comments_count"]
+        fields = ["id", "store_image", "is_bookmarked", "place_region", "name", "address", "rating", "comments_count"]
 
     def get_comments_count(self, obj):
         user = self.context["request"].user
@@ -76,7 +76,7 @@ class PlaceImageSerializer(serializers.ModelSerializer):
 class CommentImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentImage
-        fields = ["image"]
+        fields = ["image", "created_at", "updated_at"]
 
 
 class CommentsSerializer(serializers.ModelSerializer):
@@ -84,7 +84,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comments
-        fields = ["content", "rating", "comment_images"]
+        fields = ["content", "rating", "comment_images", "created_at", "updated_at"]
 
 
 class RecommendCategorySerializer(serializers.ModelSerializer):
@@ -154,11 +154,18 @@ class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
 
 
 class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
-    images = CommentImageSerializer(many=True, read_only=True, source="comment_images")
+    images = serializers.SerializerMethodField()
 
     class Meta:
         model = Comments
-        fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
+        fields = ["id", "content", "rating", "images", "created_at", "updated_at"]  # Adjust fields as per your model
+
+    def get_images(self, obj):
+        # Assuming `CommentImage` has a field `image` that stores the image file
+        return [
+            {"url": image.image.url, "created_at": image.created_at, "updated_at": image.updated_at}
+            for image in obj.comment_images.all()
+        ]
 
     def create(self, validated_data):
         user = self.context["user"]

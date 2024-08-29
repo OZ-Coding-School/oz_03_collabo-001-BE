@@ -105,19 +105,11 @@ class UpdateProfileImageView(APIView):
         user = request.user
         profile_image = request.FILES.get("profile_image")
 
-        logger.debug(f"User {user.nickname} is attempting to upload a file.")
-
         if not profile_image:
-            logger.error("No profile image provided.")
-
             raise ValidationError("No profile image provided.")
-
-        logger.debug(f"Received file: {profile_image.name}, Size: {profile_image.size} bytes")
 
         user.profile_image = profile_image
         user.save()
-
-        logger.info(f"Profile image for user {user.nickname} updated successfully.")
 
         # S3에 저장된 이미지의 URL 가져오기
         image_url = user.profile_image.url
