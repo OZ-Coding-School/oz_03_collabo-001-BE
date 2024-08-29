@@ -18,6 +18,9 @@ from .models import (
 
 
 class PlaceSubcategorySerializer(serializers.ModelSerializer):
+    goto_url = serializers.SerializerMethodField()
+    
+    
     class Meta:
         model = PlaceSubcategory
         fields = ["id", "subcategory"]
