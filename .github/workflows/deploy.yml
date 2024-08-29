@@ -26,8 +26,8 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker-compose -f docker-compose-pro.yml build web
-        docker-compose -f docker-compose-pro.yml push web
+        docker-compose -f docker-compose-pro.yml build
+        docker-compose -f docker-compose-pro.yml push
 
     - name: Deploy to server
       uses: appleboy/ssh-action@master
