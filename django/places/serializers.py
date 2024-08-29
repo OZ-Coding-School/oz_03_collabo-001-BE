@@ -76,7 +76,7 @@ class PlaceImageSerializer(serializers.ModelSerializer):
 class CommentImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentImage
-        fields = ["image"]
+        fields = ["image", "created_at", "updated_at"]
 
 
 class CommentsSerializer(serializers.ModelSerializer):
@@ -84,7 +84,7 @@ class CommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comments
-        fields = ["content", "rating", "comment_images"]
+        fields = ["content", "rating", "comment_images", "created_at", "updated_at"]
 
 
 class RecommendCategorySerializer(serializers.ModelSerializer):

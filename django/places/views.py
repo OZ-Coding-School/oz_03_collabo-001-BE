@@ -269,6 +269,7 @@ class AegaPlaceView(APIView):
 
 class AegaPlaceCommentsView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
+    parser_classes = (MultiPartParser, FormParser)
 
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 조회",
@@ -293,7 +294,57 @@ class AegaPlaceCommentsView(APIView):
     @swagger_auto_schema(
         operation_summary="애개플레이스 게시물별 댓글 수정",
         operation_description="애개플레이스 게시물별 댓글 수정",
-        request_body=CommentsSerializer,  # 수정할 댓글 데이터를 받는 Serializer
+        manual_parameters=[
+            openapi.Parameter(
+                "content",
+                openapi.IN_FORM,
+                description="Comment content",
+                type=openapi.TYPE_STRING,
+                required=True,
+            ),
+            openapi.Parameter(
+                "rating",
+                openapi.IN_FORM,
+                description="Rating for the place",
+                type=openapi.TYPE_INTEGER,
+                required=False,
+            ),
+            openapi.Parameter(
+                "profile_image_1",
+                openapi.IN_FORM,
+                description="Profile image file 1",
+                type=openapi.TYPE_FILE,
+                required=False,
+            ),
+            openapi.Parameter(
+                "profile_image_2",
+                openapi.IN_FORM,
+                description="Profile image file 2",
+                type=openapi.TYPE_FILE,
+                required=False,
+            ),
+            openapi.Parameter(
+                "profile_image_3",
+                openapi.IN_FORM,
+                description="Profile image file 3",
+                type=openapi.TYPE_FILE,
+                required=False,
+            ),
+            openapi.Parameter(
+                "profile_image_4",
+                openapi.IN_FORM,
+                description="Profile image file 4",
+                type=openapi.TYPE_FILE,
+                required=False,
+            ),
+            openapi.Parameter(
+                "profile_image_5",
+                openapi.IN_FORM,
+                description="Profile image file 5",
+                type=openapi.TYPE_FILE,
+                required=False,
+            ),
+        ],
         responses={
             200: openapi.Response("성공", CommentsSerializer),
             400: "잘못된 요청",
@@ -308,14 +359,37 @@ class AegaPlaceCommentsView(APIView):
         except Comments.DoesNotExist:
             return Response({"detail": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # 유저 검사
+        # Extract data and files from the request
+        data = request.data.copy()
+        files = {
+            "profile_image_1": request.FILES.get("profile_image_1"),
+            "profile_image_2": request.FILES.get("profile_image_2"),
+            "profile_image_3": request.FILES.get("profile_image_3"),
+            "profile_image_4": request.FILES.get("profile_image_4"),
+            "profile_image_5": request.FILES.get("profile_image_5"),
+        }
+
+        # Remove None entries from files
+        files = {key: value for key, value in files.items() if value}
+
+        # User check
         if comment.user != request.user:
             return Response({"detail": "자신의 후기만 수정할 수 있습니다."}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = CommentsSerializer(comment, data=request.data, partial=True)
+        # Update the comment content and rating
+        serializer = CommentsSerializer(comment, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            comment.comment_images.all().delete()
+
+            # If there are new images, clear existing images and save the new ones
+            if files:
+                # Save new images
+                for image in files.values():
+                    CommentImage.objects.create(comment=comment, image=image)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
