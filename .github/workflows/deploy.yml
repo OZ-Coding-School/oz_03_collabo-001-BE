@@ -30,13 +30,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image with unique tag
+      - name: Build and push Docker image
         run: |
-          IMAGE_TAG=$(git rev-parse --short HEAD)
-          docker-compose -f docker-compose-pro.yml build --no-cache
-          docker tag oz_03_collabo-001-be_web:latest oz_03_collabo-001-be_web:$IMAGE_TAG
-          docker push oz_03_collabo-001-be_web:$IMAGE_TAG
-          docker push oz_03_collabo-001-be_web:latest
+          sudo docker-compose -f docker-compose-pro.yml build
+          sudo docker-compose -f docker-compose-pro.yml push
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
