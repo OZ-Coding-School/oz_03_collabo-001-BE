@@ -4,6 +4,7 @@ from .views import *
 
 urlpatterns = [
     path("", AegaPlaceWholeView.as_view(), name="aegaplace_whole_view"),
+    path("my-place-history/", MyPlaceHistroyView.as_view(), name="my_place_history"),
     path("<str:main_category>/main/", AegaPlaceMainView.as_view(), name="aegaplace_main_view"),
     path("<int:place_pk>/", AegaPlaceView.as_view(), name="aegaplace_view"),
     path("<int:place_pk>/bookmark/", AegaPlaceMainBookmarkView.as_view(), name="aegaplace_main_bookmark_view"),
