@@ -90,6 +90,7 @@ class Place(CommonModel):
 
 
 class PlaceImage(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     place = models.ForeignKey(
         Place, on_delete=models.CASCADE, related_name="place_images"
     )  # Foreign Key로 Comment 참조
@@ -100,6 +101,7 @@ class PlaceImage(CommonModel):
 
 
 class PlaceDescriptionImage(CommonModel):
+    id = models.BigAutoField(primary_key=True)  # Primary Key로 설정된 테이블 ID
     place = models.ForeignKey(
         Place, on_delete=models.CASCADE, related_name="place_description_images"
     )  # Foreign Key로 Comment 참조
