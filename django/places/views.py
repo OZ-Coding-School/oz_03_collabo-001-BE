@@ -521,7 +521,7 @@ class AegaPlaceCommentsView(APIView):
         },
         tags=["AegaPlace"],
     )
-    def put(self, request, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         comment_id = kwargs.get("comment_pk")
 
         try:
