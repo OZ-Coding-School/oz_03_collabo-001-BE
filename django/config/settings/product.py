@@ -18,12 +18,16 @@ CORS_ALLOWED_ORIGINS = [
     "https://api.dogandbaby.co.kr",
     "https://www.dogandbaby.co.kr",
     "https://dogandbaby.co.kr",
+    "localhost",
+    "127.0.0.1",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://api.dogandbaby.co.kr",
     "https://www.dogandbaby.co.kr",
     "https://dogandbaby.co.kr",
+    "localhost",
+    "127.0.0.1",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
