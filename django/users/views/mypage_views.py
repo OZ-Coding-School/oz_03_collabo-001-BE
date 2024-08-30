@@ -35,7 +35,7 @@ class MyProfileView(APIView):
     )
     def get(self, request):
         user = request.user
-        profile_serializer = UserProfileSerializer(user)
+        profile_serializer = UserProfileSerializer(user, context={"request": request})
 
         new_places_obj = Place.objects.filter(user=user).order_by("-created_at")[:3]
         places_serializer = MainPagePlaceSerializer(new_places_obj, many=True, context={"request": request})
@@ -49,11 +49,11 @@ class MyProfileView(APIView):
 
         # Get recent 2 comments from all users
         recent_comments = Comments.objects.all().order_by("-created_at")[:2]
-        comments_serializer = CommentsSerializer(recent_comments, many=True)
+        comments_serializer = CommentsSerializer(recent_comments, many=True, context={"request": request})
 
         # Get banners
         banners = Banner.objects.filter(category__name="마이페이지", visible=True)
-        banner_serializer = BannerSerializer(banners, many=True)
+        banner_serializer = BannerSerializer(banners, many=True, context={"request": request})
 
         data = {
             "profile": profile_serializer.data,
@@ -111,8 +111,8 @@ class UpdateProfileImageView(APIView):
         user.profile_image = profile_image
         user.save()
 
-        # S3에 저장된 이미지의 URL 가져오기
-        image_url = user.profile_image.url
+        image_url = request.build_absolute_uri(user.profile_image.url)
+
 
         return Response(
             {"message": "Profile image updated successfully.", "image_url": image_url}, status=status.HTTP_200_OK
@@ -286,7 +286,7 @@ class ViewHistoryView(APIView):
     def get(self, request):
         user = request.user
         viewHistory = ViewHistory.objects.filter(user=user).order_by("-created_at")
-        viewHistorySerializer = ViewHistorySerializer(viewHistory, many=True)
+        viewHistorySerializer = ViewHistorySerializer(viewHistory, many=True, context={"request": request})
 
         return Response(viewHistorySerializer.data, status=status.HTTP_200_OK)
 
@@ -301,6 +301,6 @@ class MycommentView(APIView):
     def get(self, request):
         user = request.user
         mycomment = Comments.objects.filter(user=user).order_by("-created_at")
-        commentsSerializer = CommentsSerializer(mycomment, many=True)
+        comments_serializer = CommentsSerializer(mycomment, many=True, context={"request": request})
 
-        return Response(commentsSerializer.data, status=status.HTTP_200_OK)
+        return Response(comments_serializer.data, status=status.HTTP_200_OK)

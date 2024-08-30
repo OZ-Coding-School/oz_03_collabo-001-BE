@@ -367,7 +367,7 @@ class AegaPlaceMainView(APIView):
             banner_obj = Banner.objects.filter(category__name=main_category, visible=True)
             recommandedplace_obj = RecommendedPlace.objects.filter(category__name=main_category)
 
-        banner_serializer = MainPageBannerSerializer(banner_obj, many=True)
+        banner_serializer = MainPageBannerSerializer(banner_obj, many=True, context={"request": request})
         recommandedplace_serializer = MainPageRecommendedPlaceSerializer(
             recommandedplace_obj, many=True, context={"request": request}
         )
@@ -458,7 +458,7 @@ class AegaPlaceCommentsView(APIView):
         if not comments.exists():
             return Response({"detail": "No comments found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = CommentsSerializer(comments, many=True)
+        serializer = CommentsSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
@@ -547,7 +547,7 @@ class AegaPlaceCommentsView(APIView):
             return Response({"detail": "자신의 후기만 수정할 수 있습니다."}, status=status.HTTP_403_FORBIDDEN)
 
         # Update the comment content and rating
-        serializer = CommentsSerializer(comment, data=data, partial=True)
+        serializer = CommentsSerializer(comment, data=data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             comment.comment_images.all().delete()
@@ -609,7 +609,7 @@ class AegaPlaceCommentsAllView(APIView):
             return Response({"detail": "Place not found"}, status=status.HTTP_404_NOT_FOUND)
 
         comments = Comments.objects.filter(place=place)
-        serializer = PlaceFullDetailCommentsSerializer(comments, many=True)
+        serializer = PlaceFullDetailCommentsSerializer(comments, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -695,7 +695,7 @@ class AegaPlaceCommentsAllView(APIView):
         files = {key: value for key, value in files.items() if value}
 
         # Initialize the serializer with the data and context
-        serializer = PlaceFullDetailCommentsSerializer(data=data, context={"place": place_id, "user": request.user})
+        serializer = PlaceFullDetailCommentsSerializer(data=data, context={"place": place_id, "user": request.user, "request": request})
 
         if serializer.is_valid():
             # Create the comment instance
@@ -730,7 +730,7 @@ class AegaPlaceCommentImagesView(APIView):
             return Response({"detail": "No comment images found"}, status=status.HTTP_404_NOT_FOUND)
 
         # 시리얼라이저 사용
-        serializer = CommentImageSerializer(comment_images, many=True)
+        serializer = CommentImageSerializer(comment_images, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
