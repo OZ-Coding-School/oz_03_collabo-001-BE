@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          sudo docker-compose -f docker-compose-pro.yml build
+          sudo docker-compose -f docker-compose-pro.yml build web
           sudo docker-compose -f docker-compose-pro.yml push dg01
 
       - name: Deploy to server
