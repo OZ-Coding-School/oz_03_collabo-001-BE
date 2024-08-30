@@ -1,10 +1,16 @@
 import os
 import random
+import time
 import urllib.request
 
 from common.models import Banner, Category
 from geopy.geocoders import Nominatim
 from places.models import Place, PlaceImage, PlaceRegion, PlaceSubcategory, ServicesIcon
+from places.utils import (
+    generate_random_placename,
+    generate_random_ServiceIcon,
+    get_image_by_url,
+)
 from users.models import CustomUser
 from users.utils import generate_random_nickname
 
@@ -14,25 +20,30 @@ from django.core.management.base import BaseCommand
 
 
 def getRandomAddress():
-    # Nominatim 지오코더 객체 생성
-    geolocator = Nominatim(user_agent="geoapiExercises")
+    try:
+        # Nominatim 지오코더 객체 생성
+        geolocator = Nominatim(user_agent="geoapiExercises")
 
-    # 위도와 경도의 범위 설정 (한국 대부분 지역)
-    min_lat, max_lat = 35.136077, 37.680704
-    min_lon, max_lon = 126.659877, 128.945123
+        # 위도와 경도의 범위 설정 (한국 대부분 지역)
+        min_lat, max_lat = 35.136077, 37.680704
+        min_lon, max_lon = 126.659877, 128.945123
 
-    # 랜덤한 위도와 경도 생성
-    random_latitude = random.uniform(min_lat, max_lat)
-    random_longitude = random.uniform(min_lon, max_lon)
+        # 랜덤한 위도와 경도 생성
+        random_latitude = random.uniform(min_lat, max_lat)
+        random_longitude = random.uniform(min_lon, max_lon)
 
-    # 랜덤 좌표로부터 주소 얻기
-    location = geolocator.reverse((random_latitude, random_longitude), exactly_one=True, language="ko")
+        time.sleep(0.5)
 
-    if location:
-        random_address = " ".join(location.address.split(",")[::-1]).strip()
-    else:
-        random_address = "some address"
-    return random_address
+        # 랜덤 좌표로부터 주소 얻기
+        location = geolocator.reverse((random_latitude, random_longitude), exactly_one=True, language="ko")
+
+        if location:
+            random_address = " ".join(location.address.split(",")[::-1]).strip()
+        else:
+            random_address = "some address"
+        return random_address
+    except:
+        return "some address"
 
 
 class Command(BaseCommand):
@@ -50,11 +61,6 @@ class Command(BaseCommand):
         image_url = "https://avatars.githubusercontent.com/u/21354840?v=4"
 
         try:
-
-            img_temp = NamedTemporaryFile()
-            img_temp.write(urllib.request.urlopen(image_url).read())
-            img_temp.flush()
-
             for category_name in categories:
                 category = Category.objects.get(name=category_name)
                 self.stdout.write(self.style.SUCCESS(f'Category "{category_name}" created successfully.'))
@@ -70,16 +76,17 @@ class Command(BaseCommand):
                         url_link=f"https://example.com/{category_name}/{i}",
                         visible=True,
                     )
-                    banner.image.save(f"{category_name}_{i}.jpg", File(img_temp))
+                    banner.image.save(f"{category_name}_{i}.jpg", File(get_image_by_url(image_url)))
                     banner.save()
 
                     self.stdout.write(self.style.SUCCESS(f'Banner "{category_name}_{i}" created successfully.'))
 
-            for i in range(10):
+            for i in range(7):
+                serviceIconName, ServiceIconImageUrl = generate_random_ServiceIcon(i)
                 servicesicon = ServicesIcon(
-                    name=generate_random_nickname(),
+                    name=serviceIconName,
                 )
-                servicesicon.image.save(f"servicesicon_{i}.jpg", File(img_temp))
+                servicesicon.image.save(f"servicesicon_{i}.jpg", File(get_image_by_url(ServiceIconImageUrl)))
                 servicesicon.save()
 
                 self.stdout.write(self.style.SUCCESS(f'servicesicon "{servicesicon}" created successfully.'))
@@ -97,7 +104,7 @@ class Command(BaseCommand):
             for i in range(30):
 
                 place = Place(
-                    name=generate_random_nickname(),
+                    name=generate_random_placename(),
                     description_tags=f"Description for place {i+1}",
                     address=getRandomAddress(),
                     price_text=f"10000{i+1}",
@@ -108,10 +115,10 @@ class Command(BaseCommand):
                     user=CustomUser.objects.first(),  # Assuming there is at least one user
                 )
 
-                place.store_image.save(f"place_store_image_{i}.jpg", File(img_temp))
+                place.store_image.save(f"place_store_image_{i}.jpg", File(get_image_by_url(image_url)))
 
                 # Assign a random number of service icons (1 to 10)
-                selected_icons = random.sample(services_icons, k=random.randint(1, min(10, len(services_icons))))
+                selected_icons = random.sample(services_icons, k=random.randint(1, min(2, len(services_icons))))
                 place.service_icons.set(selected_icons)
 
                 # Place Region - 1 random selection
@@ -128,7 +135,7 @@ class Command(BaseCommand):
                         place=place,
                     )
                     place_image.image.save(
-                        f"place_{i+1}_image_{j+1}.jpg", File(img_temp)
+                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url))
                     )  # Save the image to the temporary file
                     place_image.save()
 
@@ -139,6 +146,3 @@ class Command(BaseCommand):
 
         except Exception as e:
             print(e)
-        finally:
-            # Close and delete the temporary file
-            img_temp.close()
