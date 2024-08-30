@@ -17,12 +17,8 @@ jobs:
 
       - name: Install Docker Compose
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      - name: Create .env file from Secret
-        run: |
-          echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -32,8 +28,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          sudo docker-compose -f docker-compose-pro.yml build web
-          sudo docker-compose -f docker-compose-pro.yml push dg01
+          docker-compose -f docker-compose-pro.yml build web
+          docker-compose -f docker-compose-pro.yml push web
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -44,6 +40,6 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             cd /home/ec2-user/oz_03_collabo-001-BE 
-            sudo docker-compose -f docker-compose-pro.yml down
-            sudo docker-compose -f docker-compose-pro.yml pull --ignore-pull-failures
-            sudo docker-compose -f docker-compose-pro.yml up -d
+            docker-compose -f docker-compose-pro.yml down
+            docker-compose -f docker-compose-pro.yml pull
+            docker-compose -f docker-compose-pro.yml up -d
