@@ -15,16 +15,15 @@ from .models import (
 )
 
 
-# 기본 Admin 클래스 커스터마이징
 class PlaceAdmin(admin.ModelAdmin):
-    list_display = ("name", "address", "category", "rating", "user")
+    list_display = ("id", "name", "address", "category", "rating", "user")
     search_fields = ("name", "address", "category")
     list_filter = ("category", "rating")
     ordering = ("name",)
 
 
 class ServicesIconAdmin(admin.ModelAdmin):
-    list_display = ("name", "image")
+    list_display = ("id", "name", "image")
     search_fields = ("name",)
     ordering = ("name",)
 
@@ -38,27 +37,47 @@ class PlaceSubcategoryAdmin(admin.ModelAdmin):
 
 
 class CommentsAdmin(admin.ModelAdmin):
-    list_display = ("user", "place", "rating", "created_at")
+    list_display = ("id", "user", "place", "rating", "created_at")
     search_fields = ("user__nickname", "place__name", "content")
     list_filter = ("rating", "created_at")
     ordering = ("-created_at",)
 
 
 class CommentImageAdmin(admin.ModelAdmin):
-    list_display = ("comment", "image")
+    list_display = ("id", "comment", "image")
     search_fields = ("comment__content",)
     ordering = ("comment",)
 
 
+class RecommendedPlaceAdmin(admin.ModelAdmin):
+    list_display = ("id", "place", "category", "content")
+
+
+class PlaceImageAdmin(admin.ModelAdmin):
+    list_display = ("id", "place", "image")
+
+
+class RecommendCategoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+
+
+class RecommendTagsAdmin(admin.ModelAdmin):
+    list_display = ("id", "tag")
+
+
+class PlaceDescriptionImageAdmin(admin.ModelAdmin):
+    list_display = ("id", "place", "image")
+
+
 # 모델을 Admin 사이트에 등록
 admin.site.register(Place, PlaceAdmin)
-admin.site.register(RecommendedPlace)
+admin.site.register(RecommendedPlace, RecommendedPlaceAdmin)
 admin.site.register(ServicesIcon, ServicesIconAdmin)
 admin.site.register(PlaceRegion, PlaceRegionAdmin)
 admin.site.register(PlaceSubcategory, PlaceSubcategoryAdmin)
 admin.site.register(Comments, CommentsAdmin)
 admin.site.register(CommentImage, CommentImageAdmin)
-admin.site.register(PlaceImage)
-admin.site.register(RecommendCategory)
-admin.site.register(RecommendTags)
-admin.site.register(PlaceDescriptionImage)
+admin.site.register(PlaceImage, PlaceImageAdmin)
+admin.site.register(RecommendCategory, RecommendCategoryAdmin)
+admin.site.register(RecommendTags, RecommendTagsAdmin)
+admin.site.register(PlaceDescriptionImage, PlaceDescriptionImageAdmin)

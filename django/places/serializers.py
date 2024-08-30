@@ -1,6 +1,7 @@
 from common.models import Banner
 from rest_framework import serializers
 from users.models import BookMark
+from users.serializers import UserProfileSerializer
 
 from .models import (
     CommentImage,
@@ -26,7 +27,7 @@ class PlaceSubcategorySerializer(serializers.ModelSerializer):
 class MainPagePlaceSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
-    store_image = serializers.ImageField(source="place.store_image", read_only=True)
+    store_image = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Place
@@ -92,10 +93,11 @@ class CommentImageSerializer(serializers.ModelSerializer):
 
 class CommentsSerializer(serializers.ModelSerializer):
     comment_images = CommentImageSerializer(many=True, read_only=True)
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = Comments
-        fields = ["content", "rating", "comment_images", "created_at", "updated_at"]
+        fields = ["user", "content", "rating", "comment_images", "created_at", "updated_at"]
 
 
 class RecommendCategorySerializer(serializers.ModelSerializer):
@@ -153,30 +155,69 @@ class PlaceDescriptionImageSerializer(serializers.ModelSerializer):
 
 class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = Comments
-        fields = ["user", "content", "rating", "images"]  # Adjust fields as per your model
-
-    def get_images(self, obj):
-        # Fetch the first 2 images related to this comment
-        images = CommentImage.objects.filter(comment=obj)[:3]
-        return CommentImageSerializer(images, many=True).data
-
-
-class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
-    images = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Comments
-        fields = ["id", "content", "rating", "images", "created_at", "updated_at"]  # Adjust fields as per your model
+        fields = [
+            "user",
+            "id",
+            "content",
+            "rating",
+            "images",
+            "created_at",
+            "updated_at",
+        ]
 
     def get_images(self, obj):
         # Assuming `CommentImage` has a field `image` that stores the image file
         return [
-            {"url": image.image.url, "created_at": image.created_at, "updated_at": image.updated_at}
+            {
+                "image": self._get_full_image_url(image.image.url),
+                "created_at": image.created_at,
+                "updated_at": image.updated_at,
+            }
             for image in obj.comment_images.all()
         ]
+
+    def _get_full_image_url(self, url):
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(url)
+        return url
+
+
+class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+    user = UserProfileSerializer(read_only=True)
+
+    class Meta:
+        model = Comments
+        fields = [
+            "user",
+            "id",
+            "content",
+            "rating",
+            "images",
+            "created_at",
+            "updated_at",
+        ]
+
+    def get_images(self, obj):
+        request = self.context.get("request")
+        images_data = []
+        for image in obj.comment_images.all():
+            image_url = image.image.url
+            if request:
+                image_url = request.build_absolute_uri(image_url)
+            images_data.append(
+                {
+                    "url": image_url,
+                    "created_at": image.created_at,
+                    "updated_at": image.updated_at,
+                }
+            )
+        return images_data
 
     def create(self, validated_data):
         user = self.context["user"]
@@ -223,22 +264,25 @@ class AegaPlaceDetailSerializer(serializers.ModelSerializer):
         return Comments.objects.filter(place=obj).count()
 
     def get_description_images(self, obj):
-        # Filter PlaceDescriptionImage based on the current place
         description_images = PlaceDescriptionImage.objects.filter(place=obj)
-        return PlaceDescriptionImageSerializer(description_images, many=True).data
+        return [self._get_full_image_url(image.image.url) for image in description_images]
 
     def get_comment_images(self, obj):
-        # Filter CommentImage based on comments related to the current place
         comment_images = CommentImage.objects.filter(comment__place=obj)[:3]
-        return CommentImageSerializer(comment_images, many=True).data
+        return [self._get_full_image_url(image.image.url) for image in comment_images]
 
     def get_comments(self, obj):
-        # Filter Comments based on the current place
         comments = Comments.objects.filter(place=obj)[:3]
-        return PlaceDetailCommentsSerializer(comments, many=True).data
+        return PlaceDetailCommentsSerializer(comments, many=True, context=self.context).data
 
     def get_bookmark(self, obj):
         user = self.context["request"].user
         if user.is_authenticated:
             return BookMark.objects.filter(user=user, place=obj).exists()
-        return False  # 로그인하지 않았을 때는 북마크 상태를 false로 반환
+        return False
+
+    def _get_full_image_url(self, url):
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(url)
+        return url

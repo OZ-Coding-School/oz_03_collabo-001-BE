@@ -26,7 +26,7 @@ class BookMarkSerializer(serializers.ModelSerializer):
 
 class ViewHistorySerializer(serializers.ModelSerializer):
     bookmark = serializers.SerializerMethodField()
-    image = serializers.URLField(source="place.store_image")
+    image = serializers.SerializerMethodField()
     place_name = serializers.CharField(source="place.name")
     rating = serializers.IntegerField(source="place.rating")
     comments_count = serializers.SerializerMethodField()
@@ -34,6 +34,10 @@ class ViewHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ViewHistory
         fields = ["bookmark", "image", "place_name", "rating", "comments_count"]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.place.store_image.url) if obj.place.store_image else None
 
     def get_bookmark(self, obj):
         return BookMark.objects.filter(user=obj.user, place=obj.place).exists()
@@ -57,7 +61,8 @@ class CommentsSerializer(serializers.ModelSerializer):
         return obj.created_at.strftime("%Y.%m.%d")  # 날짜 부분만 추출
 
     def get_comments_images(self, obj):
-        return [image.image.url for image in CommentImage.objects.filter(comment=obj)]
+        request = self.context.get("request")
+        return [request.build_absolute_uri(image.image.url) for image in CommentImage.objects.filter(comment=obj)]
 
 
 class BannerSerializer(serializers.ModelSerializer):

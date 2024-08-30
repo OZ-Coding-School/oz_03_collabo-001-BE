@@ -157,3 +157,50 @@ def get_image_by_url(url):
     except Exception as e:
         print(f"Error downloading image from {url}: {e}")
         return None
+
+
+def get_place_image_url():
+    urls = [
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F60431621-d594-4e1b-a537-24c111bb155b%2Fimage.png?table=block&id=83403c34-b854-42de-b1f9-78169c53230a&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=600&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F24e1e56f-77b6-4b9f-afa7-3364e2143c7c%2Fimage.png?table=block&id=52da95fe-3f3d-4515-aaac-60ac909e1250&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=580&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F686099ba-5e04-445e-9c4e-c4ca6166906a%2Fimage.png?table=block&id=02cc5a1c-541b-4f8b-bcac-6fdbf2954a0d&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=450&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F1941192a-b8aa-4359-9d79-09acdd26fda5%2Fimage.png?table=block&id=bda8ab80-6e84-4410-83b4-88c27ebd8023&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=520&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2Fbf6c38f5-5445-4132-93d2-8e3b3588056e%2Fimage.png?table=block&id=37aab12b-aa82-4674-9ade-0b652eb2f61f&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=600&userId=&cache=v2",
+    ]
+    return random.choice(urls)
+
+
+def get_random_comment_for_recommend_place():
+    comments = [
+        "아늑한 분위기에서 아이와 반려견이 함께할 수 있는 카페",
+        "놀이방이 있는 넓은 실내 공간에서 아이들과 함께 즐기세요",
+        "반려견을 위한 전용 메뉴가 준비된 펫 프렌들리 카페",
+        "아이와 반려견 모두가 행복한 시간을 보낼 수 있는 공간",
+        "카페에서 아이와 반려견의 특별한 추억을 만들어 보세요",
+        "친환경 장난감과 자연 친화적인 인테리어가 돋보이는 카페",
+        "자연 속에서 아이와 반려견이 함께 뛰놀 수 있는 힐링 공간",
+        "안전한 놀이 시설이 구비된 어린이 놀이터가 있는 카페",
+        "아이를 위한 독서 공간과 반려견을 위한 놀이 공간이 함께 있는 곳",
+        "반려견과 아이가 함께 즐길 수 있는 다양한 액티비티 제공",
+        "도심 속에서 자연을 만끽할 수 있는 아이와 반려견을 위한 카페",
+        "따뜻한 햇살 아래에서 즐기는 아이와 반려견을 위한 야외 테라스",
+        "아이와 반려견을 위한 건강한 스낵 메뉴가 있는 카페",
+        "아이와 반려견의 사진 촬영을 위한 포토존이 있는 카페",
+        "조용하고 편안한 분위기에서 아이와 반려견이 함께할 수 있는 공간",
+        "아이와 반려견을 위한 특별한 이벤트와 체험 프로그램 제공",
+        "대형 놀이터와 반려견 전용 운동장이 있는 카페",
+        "아이와 반려견이 함께 즐길 수 있는 놀이기구가 구비된 카페",
+        "다양한 반려견 전용 용품이 준비된 카페",
+        "아이와 반려견의 생일 파티를 위한 전용 공간이 있는 카페",
+        "아이와 반려견이 함께 참여할 수 있는 요리 체험 프로그램 제공",
+        "자연 속에서 아이와 반려견이 안전하게 뛰어놀 수 있는 카페",
+        "아이와 반려견을 위한 그림책과 동화책이 준비된 공간",
+        "놀이방과 반려견 전용 목욕 시설이 있는 카페",
+        "아이와 반려견이 함께 힐링할 수 있는 마사지 서비스 제공",
+        "신선한 주스와 반려견 전용 간식이 있는 건강 카페",
+        "아이와 반려견이 함께 참여하는 핸드메이드 클래스 제공",
+        "편안한 쇼파와 넓은 공간에서 아이와 반려견이 함께 휴식을 취할 수 있는 카페",
+        "반려견을 위한 미니 운동회와 아이를 위한 체험학습 제공",
+        "아이와 반려견이 함께하는 특별한 하루를 위한 카페",
+    ]
+    return random.choice(comments)
