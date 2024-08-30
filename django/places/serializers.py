@@ -1,6 +1,7 @@
 from common.models import Banner
 from rest_framework import serializers
 from users.models import BookMark
+from users.serializers import UserProfileSerializer
 
 from .models import (
     CommentImage,
@@ -92,10 +93,11 @@ class CommentImageSerializer(serializers.ModelSerializer):
 
 class CommentsSerializer(serializers.ModelSerializer):
     comment_images = CommentImageSerializer(many=True, read_only=True)
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = Comments
-        fields = ["content", "rating", "comment_images", "created_at", "updated_at"]
+        fields = ["user", "content", "rating", "comment_images", "created_at", "updated_at"]
 
 
 class RecommendCategorySerializer(serializers.ModelSerializer):
@@ -166,10 +168,19 @@ class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
 
 class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
+    user = UserProfileSerializer(read_only=True)
 
     class Meta:
         model = Comments
-        fields = ["id", "content", "rating", "images", "created_at", "updated_at"]  # Adjust fields as per your model
+        fields = [
+            "user",
+            "id",
+            "content",
+            "rating",
+            "images",
+            "created_at",
+            "updated_at",
+        ]  # Adjust fields as per your model
 
     def get_images(self, obj):
         # Assuming `CommentImage` has a field `image` that stores the image file

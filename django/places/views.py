@@ -442,8 +442,8 @@ class AegaPlaceCommentsView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     @swagger_auto_schema(
-        operation_summary="애개플레이스 게시물별 댓글 조회",
-        operation_description="애개플레이스 게시물별 댓글 조회",
+        operation_summary="댓글 상세 조회",
+        operation_description="댓글 상세 조회",
         responses={
             200: openapi.Response("성공", CommentsSerializer(many=True)),
             400: "잘못된 요청",
@@ -462,8 +462,8 @@ class AegaPlaceCommentsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        operation_summary="애개플레이스 게시물별 댓글 수정",
-        operation_description="애개플레이스 게시물별 댓글 수정",
+        operation_summary="댓글 수정",
+        operation_description="댓글 id 입력하여 해당 댓글 id의 댓글 수정",
         manual_parameters=[
             openapi.Parameter(
                 "content",
@@ -563,8 +563,8 @@ class AegaPlaceCommentsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_summary="애개플레이스 게시물별 댓글 삭제",
-        operation_description="애개플레이스 게시물별 댓글 삭제",
+        operation_summary="댓글 삭제",
+        operation_description="댓글 id 입력하여 해당 id의 댓글 삭제",
         responses={
             200: openapi.Response("성공"),
             400: "잘못된 요청",
