@@ -14,6 +14,7 @@ from .models import (
     ServicesIcon,
 )
 
+
 class PlaceAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "address", "category", "rating", "user")
     search_fields = ("name", "address", "category")

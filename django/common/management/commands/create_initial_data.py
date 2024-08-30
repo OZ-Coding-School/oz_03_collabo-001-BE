@@ -1,5 +1,10 @@
 from common.models import Category
-from places.models import PlaceRegion, PlaceSubcategory, RecommendCategory, RecommendTags
+from places.models import (
+    PlaceRegion,
+    PlaceSubcategory,
+    RecommendCategory,
+    RecommendTags,
+)
 
 from django.core.management.base import BaseCommand
 

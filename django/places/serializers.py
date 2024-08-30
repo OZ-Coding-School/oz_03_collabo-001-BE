@@ -175,19 +175,16 @@ class PlaceDetailCommentsSerializer(serializers.ModelSerializer):
             {
                 "image": self._get_full_image_url(image.image.url),
                 "created_at": image.created_at,
-                "updated_at": image.updated_at
+                "updated_at": image.updated_at,
             }
             for image in obj.comment_images.all()
         ]
 
     def _get_full_image_url(self, url):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
             return request.build_absolute_uri(url)
         return url
-
-
-
 
 
 class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
@@ -213,13 +210,14 @@ class PlaceFullDetailCommentsSerializer(serializers.ModelSerializer):
             image_url = image.image.url
             if request:
                 image_url = request.build_absolute_uri(image_url)
-            images_data.append({
-                "url": image_url,
-                "created_at": image.created_at,
-                "updated_at": image.updated_at,
-            })
+            images_data.append(
+                {
+                    "url": image_url,
+                    "created_at": image.created_at,
+                    "updated_at": image.updated_at,
+                }
+            )
         return images_data
-
 
     def create(self, validated_data):
         user = self.context["user"]
@@ -267,15 +265,11 @@ class AegaPlaceDetailSerializer(serializers.ModelSerializer):
 
     def get_description_images(self, obj):
         description_images = PlaceDescriptionImage.objects.filter(place=obj)
-        return [
-            self._get_full_image_url(image.image.url) for image in description_images
-        ]
+        return [self._get_full_image_url(image.image.url) for image in description_images]
 
     def get_comment_images(self, obj):
         comment_images = CommentImage.objects.filter(comment__place=obj)[:3]
-        return [
-            self._get_full_image_url(image.image.url) for image in comment_images
-        ]
+        return [self._get_full_image_url(image.image.url) for image in comment_images]
 
     def get_comments(self, obj):
         comments = Comments.objects.filter(place=obj)[:3]
@@ -288,7 +282,7 @@ class AegaPlaceDetailSerializer(serializers.ModelSerializer):
         return False
 
     def _get_full_image_url(self, url):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
             return request.build_absolute_uri(url)
         return url

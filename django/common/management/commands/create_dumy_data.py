@@ -3,7 +3,19 @@ import time
 
 from common.models import Banner, Category
 from geopy.geocoders import Nominatim
-from places.models import Place, PlaceImage, PlaceRegion, PlaceSubcategory, ServicesIcon, Comments, CommentImage, PlaceDescriptionImage,RecommendedPlace, RecommendCategory, RecommendTags
+from places.models import (
+    CommentImage,
+    Comments,
+    Place,
+    PlaceDescriptionImage,
+    PlaceImage,
+    PlaceRegion,
+    PlaceSubcategory,
+    RecommendCategory,
+    RecommendedPlace,
+    RecommendTags,
+    ServicesIcon,
+)
 from places.utils import (
     generate_random_placename,
     generate_random_ServiceIcon,
@@ -11,7 +23,7 @@ from places.utils import (
     get_place_image_url,
     get_random_comment_for_recommend_place,
 )
-from users.models import CustomUser, ViewHistory, BookMark
+from users.models import BookMark, CustomUser, ViewHistory
 
 from django.core.files import File
 from django.core.management.base import BaseCommand
@@ -116,18 +128,14 @@ class Command(BaseCommand):
                     place_image = PlaceImage(
                         place=place,
                     )
-                    place_image.image.save(
-                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url))
-                    )
+                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url)))
                     place_image.save()
-                    
+
                 for j in range(random.randint(3, 10)):
                     place_image = PlaceDescriptionImage(
                         place=place,
                     )
-                    place_image.image.save(
-                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url))
-                    )
+                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url)))
                     place_image.save()
 
                 place.save()
@@ -151,12 +159,14 @@ class Command(BaseCommand):
                         )
                         comment_image.image.save(
                             f"comment_{comment.id}_image_{random.randint(1, 100)}.jpg",
-                            File(get_image_by_url(get_place_image_url()))
+                            File(get_image_by_url(get_place_image_url())),
                         )
                         comment_image.save()
 
-                    self.stdout.write(self.style.SUCCESS(f'Comment by "{user.nickname}" for "{place.name}" created successfully.'))
-                    
+                    self.stdout.write(
+                        self.style.SUCCESS(f'Comment by "{user.nickname}" for "{place.name}" created successfully.')
+                    )
+
             users = CustomUser.objects.all()
             places = list(Place.objects.all())
 
@@ -180,7 +190,7 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.SUCCESS(f"ViewHistory created for {user.nickname} - {place.name}"))
 
             self.stdout.write(self.style.SUCCESS("Bookmarks and ViewHistories have been added for each user."))
-            
+
             places = list(Place.objects.all())
             tags = list(RecommendTags.objects.all())
             categories = RecommendCategory.objects.all()
@@ -196,20 +206,18 @@ class Command(BaseCommand):
                     selected_tags = random.sample(tags, random.randint(3, 6))  # 3에서 6개의 랜덤한 Tags 선택
 
                     recommended_place = RecommendedPlace.objects.create(
-                        place=selected_place,
-                        category=category,
-                        content=get_random_comment_for_recommend_place()
+                        place=selected_place, category=category, content=get_random_comment_for_recommend_place()
                     )
                     recommended_place.tags.set(selected_tags)
                     recommended_place.save()
 
-                    self.stdout.write(self.style.SUCCESS(
-                        f'RecommendedPlace "{recommended_place.place.name}" created successfully with tags: {", ".join(tag.tag for tag in selected_tags)}'
-                    ))
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f'RecommendedPlace "{recommended_place.place.name}" created successfully with tags: {", ".join(tag.tag for tag in selected_tags)}'
+                        )
+                    )
 
             self.stdout.write(self.style.SUCCESS("All RecommendedPlaces created successfully."))
-
-
 
             self.stdout.write(self.style.SUCCESS("Dummy data creation completed successfully."))
 

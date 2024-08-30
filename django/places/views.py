@@ -458,7 +458,7 @@ class AegaPlaceCommentsView(APIView):
         if not comments.exists():
             return Response({"detail": "No comments found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = CommentsSerializer(comments, many=True, context={'request': request})
+        serializer = CommentsSerializer(comments, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
@@ -609,7 +609,7 @@ class AegaPlaceCommentsAllView(APIView):
             return Response({"detail": "Place not found"}, status=status.HTTP_404_NOT_FOUND)
 
         comments = Comments.objects.filter(place=place)
-        serializer = PlaceFullDetailCommentsSerializer(comments, many=True, context={'request': request})
+        serializer = PlaceFullDetailCommentsSerializer(comments, many=True, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -695,7 +695,9 @@ class AegaPlaceCommentsAllView(APIView):
         files = {key: value for key, value in files.items() if value}
 
         # Initialize the serializer with the data and context
-        serializer = PlaceFullDetailCommentsSerializer(data=data, context={"place": place_id, "user": request.user, "request": request})
+        serializer = PlaceFullDetailCommentsSerializer(
+            data=data, context={"place": place_id, "user": request.user, "request": request}
+        )
 
         if serializer.is_valid():
             # Create the comment instance

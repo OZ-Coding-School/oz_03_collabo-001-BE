@@ -113,7 +113,6 @@ class UpdateProfileImageView(APIView):
 
         image_url = request.build_absolute_uri(user.profile_image.url)
 
-
         return Response(
             {"message": "Profile image updated successfully.", "image_url": image_url}, status=status.HTTP_200_OK
         )

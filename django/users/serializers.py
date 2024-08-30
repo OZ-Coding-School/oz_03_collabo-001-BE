@@ -39,7 +39,6 @@ class ViewHistorySerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         return request.build_absolute_uri(obj.place.store_image.url) if obj.place.store_image else None
 
-
     def get_bookmark(self, obj):
         return BookMark.objects.filter(user=obj.user, place=obj.place).exists()
 
@@ -60,7 +59,6 @@ class CommentsSerializer(serializers.ModelSerializer):
 
     def get_create_date(self, obj):
         return obj.created_at.strftime("%Y.%m.%d")  # 날짜 부분만 추출
-
 
     def get_comments_images(self, obj):
         request = self.context.get("request")
