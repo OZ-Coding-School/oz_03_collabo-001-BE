@@ -245,7 +245,7 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "authentication.custom_authentication.CustomJWTAuthentication",
     ],
 }

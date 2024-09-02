@@ -10,9 +10,9 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import CustomUser, ViewHistory
-from django.shortcuts import get_object_or_404
 
 from django.db.models import OuterRef, Subquery
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
@@ -767,8 +767,6 @@ class AegaPlaceMainBookmarkView(APIView):
         else:
             return Response({"detail": "Bookmark already exists"}, status=200)
 
-    
-    
     @swagger_auto_schema(
         operation_summary="애개플레이스 북마크 해제 상태로 변경",
         operation_description=" 플레이스 북마크 해제 상태로 변경",
