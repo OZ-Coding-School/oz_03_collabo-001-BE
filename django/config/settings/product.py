@@ -116,7 +116,7 @@ STORAGES = {
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "authentication.custom_authentication.CustomJWTAuthentication",
     ],
 }
