@@ -16,6 +16,7 @@ User = get_user_model()
 
 
 class NaverExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -70,7 +71,7 @@ class NaverExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
             response.set_cookie(
                 "access_token",
@@ -79,7 +80,7 @@ class NaverExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
 
             return response

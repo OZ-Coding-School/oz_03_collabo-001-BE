@@ -15,6 +15,7 @@ User = get_user_model()
 
 # 구글 소셜로그인
 class GoogleExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드
@@ -73,7 +74,7 @@ class GoogleExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
             response.set_cookie(
                 "access_token",
@@ -82,7 +83,7 @@ class GoogleExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
 
             return response
