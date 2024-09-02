@@ -16,6 +16,7 @@ User = get_user_model()
 
 
 class NaverExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):

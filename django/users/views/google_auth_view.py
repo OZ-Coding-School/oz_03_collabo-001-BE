@@ -15,6 +15,7 @@ User = get_user_model()
 
 # 구글 소셜로그인
 class GoogleExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     # 인가코드를 엔드포인트로 정보 담아서 보내는 코드

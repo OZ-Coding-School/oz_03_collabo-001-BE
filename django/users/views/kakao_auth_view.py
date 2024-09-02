@@ -15,6 +15,7 @@ User = get_user_model()
 
 # 카카오 소셜 로그인
 class KakaoExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
