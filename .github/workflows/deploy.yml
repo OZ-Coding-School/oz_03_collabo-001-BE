@@ -39,8 +39,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
+            cd ~/oz_03_collabo-001-BE 
             git stash
             git switch develop
             git pull origin develop
             sudo docker-compose -f docker-compose-pro.yml up --build -d
-
