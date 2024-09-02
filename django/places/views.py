@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import CustomUser, ViewHistory
+from django.shortcuts import get_object_or_404
 
 from django.db.models import OuterRef, Subquery
 from django.utils import timezone
@@ -740,8 +741,8 @@ class AegaPlaceMainBookmarkView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_summary="애개플레이스 북마크",
-        operation_description="조회중인 플레이스 북마크",
+        operation_summary="애개플레이스 북마크 체크 상태로 변경",
+        operation_description=" 플레이스 북마크 체크 상태로 변경",
         manual_parameters=[
             openapi.Parameter("place_pk", openapi.IN_PATH, description="Place ID", type=openapi.TYPE_INTEGER),
         ],
@@ -751,7 +752,6 @@ class AegaPlaceMainBookmarkView(APIView):
         },
         tags=["AegaPlace"],
     )
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         place_id = kwargs.get("place_pk")
         user = request.user
@@ -761,10 +761,32 @@ class AegaPlaceMainBookmarkView(APIView):
         except Place.DoesNotExist:
             return Response({"detail": "Place not found"}, status=404)
 
-        # Toggle bookmark: if it exists, delete it; if it doesn't, create it
         bookmark, created = BookMark.objects.get_or_create(user=user, place=place)
-        if not created:
-            bookmark.delete()
-            return Response({"detail": "Bookmark removed"}, status=200)
-        else:
+        if created:
             return Response({"detail": "Bookmark added"}, status=200)
+        else:
+            return Response({"detail": "Bookmark already exists"}, status=200)
+
+    
+    
+    @swagger_auto_schema(
+        operation_summary="애개플레이스 북마크 해제 상태로 변경",
+        operation_description=" 플레이스 북마크 해제 상태로 변경",
+        manual_parameters=[
+            openapi.Parameter("place_pk", openapi.IN_PATH, description="Place ID", type=openapi.TYPE_INTEGER),
+        ],
+        responses={
+            200: openapi.Response("성공"),
+            400: "잘못된 요청",
+        },
+        tags=["AegaPlace"],
+    )
+    def delete(self, request, *args, **kwargs):
+        place_id = kwargs.get("place_pk")
+        user = request.user
+
+        place = get_object_or_404(Place, id=place_id)
+        bookmark = get_object_or_404(BookMark, user=user, place=place)
+
+        bookmark.delete()
+        return Response({"detail": "Bookmark removed"}, status=200)
