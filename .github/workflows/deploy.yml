@@ -39,7 +39,19 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
+            # cd /home/ec2-user/oz_03_collabo-001-BE 
+            # docker-compose -f docker-compose-pro.yml down
+            # docker-compose -f docker-compose-pro.yml pull
+            # docker-compose -f docker-compose-pro.yml up -d
+
+            git stash
+            git switch develop
+            git pull origin develop
+            cd /home/ec2-user/oz_03_collabo-001-BE/django
+            # 모든 앱의 migrations 폴더 내의 __init__.py 파일을 제외한 모든 파일 삭제
+            sudo find . -path "*/migrations/*.py" -not -name "__init__.py" -exec rm {} \;
+            sudo find . -path "*/migrations/*.pyc" -exec rm {} \;
+
             cd /home/ec2-user/oz_03_collabo-001-BE 
-            docker-compose -f docker-compose-pro.yml down
-            docker-compose -f docker-compose-pro.yml pull
-            docker-compose -f docker-compose-pro.yml up -d
+            sudo docker-compose -f docker-compose.yml up --build -d
+
