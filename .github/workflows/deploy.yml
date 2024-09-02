@@ -42,11 +42,5 @@ jobs:
             git stash
             git switch develop
             git pull origin develop
-            cd /home/ec2-user/oz_03_collabo-001-BE/django
-
-            sudo find . -path "*/migrations/*.py" -not -name "__init__.py" -exec rm {} \;
-            sudo find . -path "*/migrations/*.pyc" -exec rm {} \;
-
-            cd /home/ec2-user/oz_03_collabo-001-BE 
             sudo docker-compose -f docker-compose.yml up --build -d
 
