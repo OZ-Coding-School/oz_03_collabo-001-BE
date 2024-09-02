@@ -34,6 +34,16 @@ class MyProfileView(APIView):
         tags=["MyPage"],
     )
     def get(self, request):
+        # 액세스 토큰을 쿠키에서 가져오기
+        token = request.COOKIES.get("access_token")
+
+        # 토큰이 없을 경우
+        if not token:
+            logger.warning("Access token not found in cookies")
+
+        # 로그에 토큰 정보 남기기 (주의: 민감한 정보를 로그에 남기는 것은 보안에 위험할 수 있습니다)
+        #logger.debug(f"Access token: {token}")
+        
         user = request.user
         profile_serializer = UserProfileSerializer(user)
 
