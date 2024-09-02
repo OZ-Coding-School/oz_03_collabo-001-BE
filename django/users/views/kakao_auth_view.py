@@ -75,7 +75,7 @@ class KakaoExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
             response.set_cookie(
                 "access_token",
@@ -84,7 +84,7 @@ class KakaoExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
 
             return response
