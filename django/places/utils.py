@@ -204,3 +204,19 @@ def get_random_comment_for_recommend_place():
         "아이와 반려견이 함께하는 특별한 하루를 위한 카페",
     ]
     return random.choice(comments)
+
+
+def get_random_place_store_image():
+    random_images_url = [
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F0c1c6984-21a6-4cf6-97b9-bf84cae0addd%2Fimages.jpg?table=block&id=44f73b84-b184-4955-9a73-68410317e546&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=600&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2Ff51589bc-73d4-4201-bf79-a51b2237603f%2Fimages.jpg?table=block&id=6b1f614c-32a9-428e-80ad-20a0c90e48f7&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=550&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2Ff5b70156-f9fd-4ecf-9543-43dedb5d1cb1%2Fdownload.jpg?table=block&id=f1aef8ea-4440-45de-88bd-e1644e8c7fbe&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=450&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2Fc7cf17e5-f352-47b1-97c1-85f87c559950%2Fimages.jpg?table=block&id=5d980a29-baab-41c8-878b-18920cc39995&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=520&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F75895675-353b-481a-b576-2cd8ce091178%2Fdownload.jpg?table=block&id=af012d3a-fd5d-4d0d-98df-7991a0211180&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=580&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F12756335-af38-465b-aef7-83ee18f409ce%2Fimages.jpg?table=block&id=eb8bca1e-a532-4c45-9ad2-8f83c5bae7f5&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=600&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F531a9a03-7dd1-4d42-b4a1-409b9adf766b%2Fimages.jpg?table=block&id=5e1cd694-f75b-4cdd-8361-0927f0807a0f&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=580&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F7e86ff19-56e7-4d7b-b8b9-159ba4b5c824%2Fimages.jpg?table=block&id=1099742f-12fd-4ae1-92f0-90605e5f9435&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=390&userId=&cache=v2",
+        "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F4201c4e3-a838-4565-a039-823c63fb6554%2Fimages.jpg?table=block&id=ac09e2c3-8c76-4081-8718-099c3eccb902&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=550&userId=&cache=v2",
+    ]
+    
+    return random.choice(random_images_url)
