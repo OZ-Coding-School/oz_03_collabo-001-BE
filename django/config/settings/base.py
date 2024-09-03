@@ -164,7 +164,7 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_SECURE": True,  # HTTPS에서만 쿠키 전송
     "AUTH_COOKIE_HTTP_ONLY": True,  # JavaScript에서 쿠키에 접근 불가
     "AUTH_COOKIE_PATH": "/",  # 쿠키의 경로
-    "AUTH_COOKIE_SAMESITE": "Lax",  # CSRF 방지
+    "AUTH_COOKIE_SAMESITE": "Strict",  # CSRF 방지
 }
 
 # 로그인 후 리디렉션할 URL
@@ -242,3 +242,10 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "authentication.custom_authentication.CustomJWTAuthentication",
+    ],
+}

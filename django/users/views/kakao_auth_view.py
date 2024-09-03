@@ -15,6 +15,7 @@ User = get_user_model()
 
 # 카카오 소셜 로그인
 class KakaoExchangeCodeForToken(APIView):
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -74,7 +75,7 @@ class KakaoExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
             response.set_cookie(
                 "access_token",
@@ -83,7 +84,7 @@ class KakaoExchangeCodeForToken(APIView):
                 httponly=True,
                 secure=settings.SESSION_COOKIE_SECURE,
                 max_age=6060247,
-                samesite="Lax",
+                samesite="Strict",
             )
 
             return response
