@@ -78,6 +78,7 @@ class RefreshAccessTokenView(APIView):
             )
 
             # 새 refresh token 설정 (선택적)
+            # 이부분 코드는 액세스 토큰이 새로발급되면 리프레시 토큰도 새로발급되게 하는 코드인데 세팅에서 "ROTATE_REFRESH_TOKENS": False를 true로 설정해줘야 작동합니다. 아직 토큰관리가 복잡할까봐 false해놧습니다.
             if settings.SIMPLE_JWT.get("ROTATE_REFRESH_TOKENS", False):
                 new_refresh_token = str(refresh)
                 response.set_cookie(
