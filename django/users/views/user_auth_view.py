@@ -30,21 +30,58 @@ class UserTokenVerifyView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        # 쿠키에서 액세스 토큰과 리프레시 토큰 가져오기
+        access_token = request.COOKIES.get("access_token")
+        refresh_token = request.COOKIES.get("refresh_token")
 
-        # 쿠키에서 access 토큰 가져오기
-        token = request.COOKIES.get("access_token")
-
-        # 토큰이 없을 경우 400 Bad Request 반환
-        if not token:
+        if not access_token:
             return Response({"error": "Access token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # 토큰 검증
-            AccessToken(token)
+            # 액세스 토큰 검증
+            AccessToken(access_token)
             return Response({"message": "Access token is valid"}, status=status.HTTP_200_OK)
         except (InvalidToken, TokenError):
-            # 토큰이 유효하지 않을 경우 401 Unauthorized 반환
-            return Response({"error": "Invalid access token"}, status=status.HTTP_401_UNAUTHORIZED)
+            # 액세스 토큰이 유효하지 않을 경우
+            if not refresh_token:
+                return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                # 리프레시 토큰 검증
+                refresh = RefreshToken(refresh_token)
+                # 새로운 액세스 토큰 생성
+                new_access_token = refresh.access_token
+                response_data = {
+                    "message": "Access token was expired, but refresh token is valid",
+                    "new_access_token": str(new_access_token)
+                }
+
+                # 새로운 액세스 토큰을 쿠키에 설정
+                response = Response(response_data, status=status.HTTP_200_OK)
+                response.set_cookie('access_token', str(new_access_token), httponly=True, secure=True)
+                return response
+
+            except (InvalidToken, TokenError):
+                # 리프레시 토큰이 유효하지 않을 경우
+                return Response({"error": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+    # permission_classes = [IsAuthenticated]
+
+    # def post(self, request, *args, **kwargs):
+
+    #     # 쿠키에서 access 토큰 가져오기
+    #     token = request.COOKIES.get("access_token")
+
+    #     # 토큰이 없을 경우 400 Bad Request 반환
+    #     if not token:
+    #         return Response({"error": "Access token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+
+    #     try:
+    #         # 토큰 검증
+    #         AccessToken(token)
+    #         return Response({"message": "Access token is valid"}, status=status.HTTP_200_OK)
+    #     except (InvalidToken, TokenError):
+    #         # 토큰이 유효하지 않을 경우 401 Unauthorized 반환
+    #         return Response({"error": "Invalid access token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class RefreshAccessTokenView(APIView):
