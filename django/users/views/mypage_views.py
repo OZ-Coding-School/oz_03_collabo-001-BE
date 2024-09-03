@@ -47,8 +47,10 @@ class MyProfileView(APIView):
         user = request.user
         profile_serializer = UserProfileSerializer(user, context={"request": request})
 
-        new_places_obj = Place.objects.filter(user=user).order_by("-created_at")[:3]
-        places_serializer = MainPagePlaceSerializer(new_places_obj, many=True, context={"request": request})
+        # 내 최근 북마크 3건 조회
+        recent_bookmarks = BookMark.objects.filter(user=user).order_by("-created_at")[:3]
+        recent_places = [bookmark.place for bookmark in recent_bookmarks]
+        recent_bookmarks_serializer = MainPagePlaceSerializer(recent_places, many=True, context={"request": request})
 
         # ViewHistory를 통해 최근 본 장소 목록 가져오기
         view_history_objects = ViewHistory.objects.filter(user=user).order_by("-created_at")[:3]
@@ -67,7 +69,7 @@ class MyProfileView(APIView):
 
         data = {
             "profile": profile_serializer.data,
-            "recent_bookmarks": places_serializer.data,
+            "recent_bookmarks": recent_bookmarks_serializer.data,
             "recent_view_histories": history_places_serializer.data,
             "recent_comments": comments_serializer.data,
             "banners": banner_serializer.data,
