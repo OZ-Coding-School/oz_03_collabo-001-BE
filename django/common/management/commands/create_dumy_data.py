@@ -22,6 +22,7 @@ from places.utils import (
     get_image_by_url,
     get_place_image_url,
     get_random_comment_for_recommend_place,
+    get_random_place_store_image,
 )
 from users.models import BookMark, CustomUser, ViewHistory
 
@@ -59,8 +60,6 @@ class Command(BaseCommand):
             "키즈존",
         ]
 
-        image_url = "https://avatars.githubusercontent.com/u/21354840?v=4"
-
         try:
             for category_name in categories:
                 category = Category.objects.get(name=category_name)
@@ -75,7 +74,9 @@ class Command(BaseCommand):
                         url_link=f"https://example.com/{category_name}/{i}",
                         visible=True,
                     )
-                    banner.image.save(f"{category_name}_{i}.jpg", File(get_image_by_url(image_url)))
+                    banner.image.save(
+                        f"{category_name}_{i}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     banner.save()
 
                     self.stdout.write(self.style.SUCCESS(f'Banner "{category_name}_{i}" created successfully.'))
@@ -113,7 +114,9 @@ class Command(BaseCommand):
                     user=random.choice(users),
                 )
 
-                place.store_image.save(f"place_store_image_{i}.jpg", File(get_image_by_url(image_url)))
+                place.store_image.save(
+                    f"place_store_image_{i}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                )
 
                 selected_icons = random.sample(services_icons, k=random.randint(1, min(2, len(services_icons))))
                 place.service_icons.set(selected_icons)
@@ -128,14 +131,18 @@ class Command(BaseCommand):
                     place_image = PlaceImage(
                         place=place,
                     )
-                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url)))
+                    place_image.image.save(
+                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     place_image.save()
 
                 for j in range(random.randint(3, 10)):
                     place_image = PlaceDescriptionImage(
                         place=place,
                     )
-                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(image_url)))
+                    place_image.image.save(
+                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     place_image.save()
 
                 place.save()
