@@ -45,7 +45,7 @@ class UserTokenVerifyView(APIView):
             # 액세스 토큰이 유효하지 않을 경우
             if not refresh_token:
                 return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
-            
+
             try:
                 # 리프레시 토큰 검증
                 refresh = RefreshToken(refresh_token)
@@ -53,17 +53,18 @@ class UserTokenVerifyView(APIView):
                 new_access_token = refresh.access_token
                 response_data = {
                     "message": "Access token was expired, but refresh token is valid",
-                    "new_access_token": str(new_access_token)
+                    "new_access_token": str(new_access_token),
                 }
 
                 # 새로운 액세스 토큰을 쿠키에 설정
                 response = Response(response_data, status=status.HTTP_200_OK)
-                response.set_cookie('access_token', str(new_access_token), httponly=True, secure=True)
+                response.set_cookie("access_token", str(new_access_token), httponly=True, secure=True)
                 return response
 
             except (InvalidToken, TokenError):
                 # 리프레시 토큰이 유효하지 않을 경우
                 return Response({"error": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+
     # permission_classes = [IsAuthenticated]
 
     # def post(self, request, *args, **kwargs):
