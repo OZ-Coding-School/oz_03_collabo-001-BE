@@ -218,5 +218,5 @@ def get_random_place_store_image():
         "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F7e86ff19-56e7-4d7b-b8b9-159ba4b5c824%2Fimages.jpg?table=block&id=1099742f-12fd-4ae1-92f0-90605e5f9435&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=390&userId=&cache=v2",
         "https://longing-paperback-1b8.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F8a3de105-c56b-42f5-bf1e-24a149af8068%2F4201c4e3-a838-4565-a039-823c63fb6554%2Fimages.jpg?table=block&id=ac09e2c3-8c76-4081-8718-099c3eccb902&spaceId=8a3de105-c56b-42f5-bf1e-24a149af8068&width=550&userId=&cache=v2",
     ]
-    
+
     return random.choice(random_images_url)

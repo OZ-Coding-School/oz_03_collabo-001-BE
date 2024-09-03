@@ -74,7 +74,9 @@ class Command(BaseCommand):
                         url_link=f"https://example.com/{category_name}/{i}",
                         visible=True,
                     )
-                    banner.image.save(f"{category_name}_{i}.jpg", File(get_image_by_url(get_random_place_store_image())))
+                    banner.image.save(
+                        f"{category_name}_{i}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     banner.save()
 
                     self.stdout.write(self.style.SUCCESS(f'Banner "{category_name}_{i}" created successfully.'))
@@ -112,7 +114,9 @@ class Command(BaseCommand):
                     user=random.choice(users),
                 )
 
-                place.store_image.save(f"place_store_image_{i}.jpg", File(get_image_by_url(get_random_place_store_image())))
+                place.store_image.save(
+                    f"place_store_image_{i}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                )
 
                 selected_icons = random.sample(services_icons, k=random.randint(1, min(2, len(services_icons))))
                 place.service_icons.set(selected_icons)
@@ -127,14 +131,18 @@ class Command(BaseCommand):
                     place_image = PlaceImage(
                         place=place,
                     )
-                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image())))
+                    place_image.image.save(
+                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     place_image.save()
 
                 for j in range(random.randint(3, 10)):
                     place_image = PlaceDescriptionImage(
                         place=place,
                     )
-                    place_image.image.save(f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image())))
+                    place_image.image.save(
+                        f"place_{i+1}_image_{j+1}.jpg", File(get_image_by_url(get_random_place_store_image()))
+                    )
                     place_image.save()
 
                 place.save()
@@ -222,5 +230,3 @@ class Command(BaseCommand):
 
         except Exception as e:
             print(e)
-
-
