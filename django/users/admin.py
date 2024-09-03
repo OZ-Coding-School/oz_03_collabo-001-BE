@@ -14,6 +14,8 @@ class CustomUserAdmin(BaseUserAdmin):
     search_fields = ("email", "nickname")
     ordering = ("email",)
     filter_horizontal = ()
+    
+    readonly_fields = ("created_at", "updated_at")  # Mark these fields as read-only
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
