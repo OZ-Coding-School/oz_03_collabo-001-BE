@@ -62,15 +62,14 @@ class MainPageBannerSerializer(serializers.ModelSerializer):
 
 class MainPageRecommendedPlaceSerializer(serializers.ModelSerializer):
     places = MainPagePlaceSerializer(source="place", read_only=True)
+    tags = serializers.SerializerMethodField()
 
     class Meta:
         model = RecommendedPlace
         fields = ["id", "content", "tags", "places"]
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        # Customize the representation if needed
-        return representation
+    def get_tags(self, obj):
+        return [tag.tag for tag in obj.tags.all()]
 
 
 class ServicesIconSerializer(serializers.ModelSerializer):
