@@ -64,14 +64,12 @@ class MainPageRecommendedPlaceSerializer(serializers.ModelSerializer):
     places = MainPagePlaceSerializer(source="place", read_only=True)
     tags = serializers.SerializerMethodField()
 
-
     class Meta:
         model = RecommendedPlace
         fields = ["id", "content", "tags", "places"]
 
     def get_tags(self, obj):
         return [tag.tag for tag in obj.tags.all()]
-
 
 
 class ServicesIconSerializer(serializers.ModelSerializer):
