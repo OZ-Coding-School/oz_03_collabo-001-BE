@@ -178,7 +178,7 @@ class UpdateProfileNameView(APIView):
 
         if not new_name:
             return Response({"message": "No Nickname provided."}, status=210)
-        
+
         # Check if the new nickname already exists
         if CustomUser.objects.filter(nickname=new_name).exists():
             return Response({"message": "Nickname already exists."}, status=212)
