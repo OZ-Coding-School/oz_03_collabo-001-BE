@@ -150,6 +150,24 @@ class UpdateProfileNameView(APIView):
                     },
                 ),
             ),
+            212: openapi.Response(
+                "Duplicate nickname",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="Response message"),
+                    },
+                ),
+            ),
+            210: openapi.Response(
+                "empty nickname",
+                openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, description="Response message"),
+                    },
+                ),
+            ),
             400: "Bad request",
         },
         tags=["MyPage"],
@@ -159,7 +177,11 @@ class UpdateProfileNameView(APIView):
         new_name = request.query_params.get("name")
 
         if not new_name:
-            raise ValidationError("No name provided.")
+            return Response({"message": "No Nickname provided."}, status=210)
+
+        # Check if the new nickname already exists
+        if CustomUser.objects.filter(nickname=new_name).exists():
+            return Response({"message": "Nickname already exists."}, status=212)
 
         user.nickname = new_name
         user.save()
