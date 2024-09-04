@@ -160,7 +160,7 @@ class UpdateProfileNameView(APIView):
                 ),
             ),
             210: openapi.Response(
-                "empty nickname",
+                "Empty nickname",
                 openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -176,8 +176,11 @@ class UpdateProfileNameView(APIView):
         user = request.user
         new_name = request.query_params.get("name")
 
-        if not new_name:
-            return Response({"message": "No Nickname provided."}, status=210)
+        if not new_name or not new_name.strip():
+            return Response({"message": "Nickname cannot be empty or contain only spaces."}, status=210)
+
+        # Strip leading and trailing whitespaces
+        new_name = new_name.strip()
 
         # Check if the new nickname already exists
         if CustomUser.objects.filter(nickname=new_name).exists():
