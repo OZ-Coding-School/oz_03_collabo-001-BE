@@ -111,7 +111,7 @@ class RefreshAccessTokenView(APIView):
                 httponly=True,
                 samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                 secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
-                #domain=".dogandbaby.co.kr",
+                # domain=".dogandbaby.co.kr",
                 domain="localhost",
                 path="/",
             )
