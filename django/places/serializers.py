@@ -250,6 +250,7 @@ class AegaPlaceDetailSerializer(serializers.ModelSerializer):
             "rating",
             "description_tags",
             "price_text",
+            "price_link",
             "address",
             "service_icons",
             "description_images",
