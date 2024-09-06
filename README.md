@@ -38,4 +38,4 @@ http://127.0.0.1:8000/swagger/
 http://127.0.0.1:8000/redoc/
 ```
 
-### cicd test 08.23 16:53
+[스웨거](images/swagger.html)
