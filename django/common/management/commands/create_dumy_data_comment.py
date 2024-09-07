@@ -1,14 +1,8 @@
 import random
-from places.models import (
-    CommentImage,
-    Comments,
-    Place,
-)
-from places.utils import (
-    get_image_by_url,
-    get_random_comment_content,  # 랜덤 댓글 내용을 가져오는 함수
-    get_random_place_store_image,
-)
+
+from places.models import CommentImage, Comments, Place
+from places.utils import get_random_comment_content  # 랜덤 댓글 내용을 가져오는 함수
+from places.utils import get_image_by_url, get_random_place_store_image
 from users.models import CustomUser
 
 from django.core.files import File
@@ -20,13 +14,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Command-line arguments for specifying user ID range
-        parser.add_argument('start_id', type=int, help="Start ID for user range")
-        parser.add_argument('end_id', type=int, help="End ID for user range")
+        parser.add_argument("start_id", type=int, help="Start ID for user range")
+        parser.add_argument("end_id", type=int, help="End ID for user range")
 
     def handle(self, *args, **kwargs):
         # Retrieve the start and end ID from command-line arguments
-        start_id = kwargs['start_id']
-        end_id = kwargs['end_id']
+        start_id = kwargs["start_id"]
+        end_id = kwargs["end_id"]
 
         try:
             # 지정된 범위의 유저 가져오기
