@@ -40,6 +40,7 @@ class MainPagePlaceSerializer(serializers.ModelSerializer):
             "name",
             "address",
             "rating",
+            "rating_float",
             "comments_count",
         ]
 
