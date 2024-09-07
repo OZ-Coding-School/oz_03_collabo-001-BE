@@ -43,4 +43,12 @@ jobs:
             git stash
             git switch develop
             git pull origin develop
-            sudo docker-compose -f docker-compose-pro.yml up --build -d
+            docker stop $(docker ps -aq) || true
+            docker rm $(docker ps -aq) || true
+            docker rmi $(docker images -q) || true
+            docker rmi -f $(docker images -q) || true
+            yes | docker system prune -a || true
+            yes | docker volume prune || true
+            yes | docker builder prune || true
+            docker volume rm $(docker volume ls -q) || true
+            docker-compose -f docker-compose-pro.yml up --build -d || true
