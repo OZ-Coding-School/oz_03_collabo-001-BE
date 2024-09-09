@@ -53,7 +53,7 @@ class KakaoExchangeCodeForToken(APIView):
                 return JsonResponse({"error": "Kakao ID not found"}, status=400)
 
             user_data = {
-                "email": f"kakao_{kakao_id}@kakao.com",  # 고유한 이메일 생성
+                "email": f"kakao_{kakao_id}@example.com",  # 고유한 이메일 생성
                 "nickname": nickname,
                 "profile_image": user_info.get("properties", {}).get("profile_image"),
             }
