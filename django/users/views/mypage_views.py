@@ -60,7 +60,7 @@ class MyProfileView(APIView):
         history_places_serializer = MainPagePlaceSerializer(places, many=True, context={"request": request})
 
         # Get recent 2 comments from all users
-        recent_comments = Comments.objects.all().order_by("-created_at")[:2]
+        recent_comments = Comments.objects.filter(user=user).order_by("-created_at")[:2]
         comments_serializer = CommentsSerializer(recent_comments, many=True, context={"request": request})
 
         # Get banners
