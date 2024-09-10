@@ -53,7 +53,7 @@ class MyProfileView(APIView):
         recent_bookmarks_serializer = MainPagePlaceSerializer(recent_places, many=True, context={"request": request})
 
         # ViewHistory를 통해 최근 본 장소 목록 가져오기
-        view_history_objects = ViewHistory.objects.filter(user=user).order_by("-created_at")[:3]
+        view_history_objects = ViewHistory.objects.filter(user=user).order_by("-updated_at")[:3]
 
         # ViewHistory에서 Place 객체만 추출
         places = [vh.place for vh in view_history_objects]
